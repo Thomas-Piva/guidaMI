@@ -11,5 +11,9 @@ pitch/build/node_modules/
 pitch/build/*.tmp
 web/.next/
 pitch/*.pptx
+!pitch/GuidaMI-pitch.pptx
 pitch/*.pdf
+!pitch/GuidaMI-pitch.pdf
 docs/*.mp4
+.env.*
+!.env.example

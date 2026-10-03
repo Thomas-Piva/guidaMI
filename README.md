@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="https://guidami-milano.vercel.app/?demo=1"><img alt="Live app" src="https://img.shields.io/badge/Live_app-guidami--milano.vercel.app-3AC6F4"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img alt="Pitch deck" src="https://img.shields.io/badge/Pitch_deck-PDF-FFC000"></a>
   <img alt="Track 01" src="https://img.shields.io/badge/Track-01_Welcome_journey-212121">
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/Licence-MIT-008C14"></a>
 </p>
@@ -25,7 +26,22 @@
 
 **One line:** a student lands in Milan and speaks no Italian. She tells Guido what she needs ("I need to rent a room"). Guido reads the City's official guides and open data for her, gives her the steps in the right order with the office closest to her, and fills in the forms from a photo of her passport. She never has to open a portal.
 
-**Demo video:** shown at the pitch (107 s, silent, chapter titles on screen) · **Live app:** https://guidami-milano.vercel.app/?demo=1
+**Demo video:** embedded in [`pitch/GuidaMI-pitch.pptx`](pitch/GuidaMI-pitch.pptx), slide 3 (107 s, silent, chapter titles on screen) · **Live app:** https://guidami-milano.vercel.app/?demo=1
+
+## Presentation
+
+Open the deck right here on GitHub: [`pitch/GuidaMI-pitch.pdf`](pitch/GuidaMI-pitch.pdf). The PowerPoint version, [`pitch/GuidaMI-pitch.pptx`](pitch/GuidaMI-pitch.pptx), has the 107-second demo video embedded on slide 3, so it plays even when the file is sent as an attachment. The spoken pitch, in Italian, is in [`pitch/SPEECH.md`](pitch/SPEECH.md).
+
+<p align="center">
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-1.png" width="190" alt="Slide 1"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-2.png" width="190" alt="Slide 2"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-3.png" width="190" alt="Slide 3"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-4.png" width="190" alt="Slide 4"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-5.png" width="190" alt="Slide 5"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-6.png" width="190" alt="Slide 6"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-7.png" width="190" alt="Slide 7"></a>
+  <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-8.png" width="190" alt="Slide 8"></a>
+</p>
 
 ## How GuidaMI answers the jury's five questions
 
@@ -140,7 +156,7 @@ node scripts/create-agent.mjs  # creates the ElevenLabs agent, writes ELEVENLABS
 npm run dev                    # http://localhost:3000
 ```
 
-Without keys the app still runs. Open `/?demo=1` for the whole flow with sample data (labelled as such), `/?demo=1&screen=plan` to jump to one screen, `/splash` for the opening screen and `/concept?s=talent-search` for the next stops. Tests: `npx vitest run`.
+API keys live only in `web/.env.local`, which git ignores; `.env.example` holds placeholders. Without keys the app still runs. Open `/?demo=1` for the whole flow with sample data (labelled as such), `/?demo=1&screen=plan` to jump to one screen, `/splash` for the opening screen and `/concept?s=talent-search` for the next stops. Tests: `npx vitest run`.
 
 ## Team
 
