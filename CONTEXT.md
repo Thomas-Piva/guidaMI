@@ -26,12 +26,23 @@ Nour never opens a portal: a guide that understands what a newcomer needs, reads
 - Video = product demo (Higgsfield drone scene + real screens); slides = pitch story (PowerPoint, 5).
 - No avatar. Logo: abstract icon from Higgsfield (yellow + red on white).
 
+## For the team
+| What | Where | How to change it |
+|---|---|---|
+| Mockups (all screens + animated prototype) | [design/mockups/index.html](design/mockups/index.html) · live: https://thomas-piva.github.io/milano-evolution/design/mockups/ | one HTML file, no build: each screen is an entry of the `S` array in the script (`name`, `cap`, `html`); elements with `data-t="ms"` light up at that time in the prototype, `data-type` types text. Colours and type are the CSS tokens at the top. Open the file in a browser to check, then commit |
+| Illustrations (Higgsfield, isometric, Airbnb style) | [design/mockups/illustrations/](design/mockups/illustrations/) | `step1-arrival`, `step2-room`, `step3-papers`, `step4-coffee` (.webp, 800 px) |
+| Logo candidates (Higgsfield) | [design/logo/](design/logo/) | 8 icons on 4 concepts; best picks 1-b, 2-b, 4-a; concept 3 needs another pass |
+| Design rules | [DESIGN.md](DESIGN.md) | Airbnb language; our overrides: red `#A50D26` for primary buttons and voice orb, yellow `#FFC800` for highlights |
+| Plan and decisions | [docs/PLAN.md](docs/PLAN.md) | |
+
 ## Status log
 | Time | Status |
 |---|---|
 | 12:36 | repo created, docs and user stories pushed |
 | 13:50 | plan approved; PLAN.md, DESIGN.md (getdesign airbnb) saved |
-| 14:00 | studying the 70 Airbnb reference screens; logo generation running; mockups in progress, waiting for Thomas's approval before any code |
+| 14:00 | studied the 70 Airbnb reference screens |
+| 14:35 | design pass with impeccable + taste skill: bottom voice dock with live captions, yellow only for progress and checks, Phosphor icons, cards instead of lined lists; PRODUCT.md added |
+| 14:20 | mockups of all 12 screens + animated prototype, 4 isometric illustrations, 8 logo candidates in `design/`; **waiting for Thomas's approval before any code** (Higgsfield credits left: about 18) |
 
 ## Open
 - `.env` with `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY` (missing)

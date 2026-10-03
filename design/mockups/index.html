@@ -1,0 +1,506 @@
+<title>Milano Evolution Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+/* Layout: storyboard page. Top: one autoplay phone that walks Nour's whole flow with captions.
+   Below: every screen side by side at rest (final state), Airbnb wizard language with Milano colours.
+   Single light theme on purpose (Airbnb has no dark mode); every colour set explicitly. */
+:root{
+  --canvas:#ffffff; --ink:#222222; --body:#3f3f3f; --muted:#6a6a6a; --hair:#dddddd; --hair2:#ebebeb;
+  --soft:#f7f7f7; --strong:#f2f2f2; --red:#A50D26; --red-d:#7f0a1d; --yellow:#FFC800; --yellow-soft:#FFF4CC;
+  --page:#F4F4F2;
+  --font:"Inter","Helvetica Neue",-apple-system,system-ui,sans-serif;
+  --shadow:rgba(0,0,0,.02) 0 0 0 1px, rgba(0,0,0,.04) 0 2px 6px, rgba(0,0,0,.1) 0 4px 8px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.43;padding-inline:16px;padding-block:28px 64px;color-scheme:light}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3,p{margin:0}
+h1,h2{text-wrap:balance}
+.top{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between}
+.top h1{font-size:30px;font-weight:700;letter-spacing:-.4px}
+.top p{color:var(--muted);max-width:62ch}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.sw i{width:18px;height:18px;border-radius:50%;display:block;border:1px solid var(--hair)}
+.label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* hero: autoplay */
+.hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:40px;align-items:center;background:var(--canvas);border-radius:20px;padding:28px}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.hero-side{display:flex;flex-direction:column;gap:16px;max-width:52ch}
+.hero-side h2{font-size:24px;font-weight:600;letter-spacing:-.3px}
+.caption{font-size:17px;line-height:1.45;min-height:3em}
+.caption small{display:block;color:var(--muted);font-size:13px;margin-top:6px}
+.dots{display:flex;flex-wrap:wrap;gap:6px}
+.dots button{font:inherit;font-size:12px;border:1px solid var(--hair);background:var(--canvas);color:var(--ink);border-radius:999px;padding:5px 10px;cursor:pointer}
+.dots button[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ctrl{display:flex;gap:10px}
+.btn{font:inherit;font-weight:500;border-radius:8px;padding:10px 18px;cursor:pointer;border:1px solid var(--ink);background:var(--canvas);color:var(--ink)}
+.btn.dark{background:var(--ink);color:#fff}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+/* phone */
+.phone{width:320px;height:668px;border-radius:44px;background:#111;padding:10px;box-shadow:0 30px 60px -20px rgba(0,0,0,.35);flex:none;position:relative}
+.scr{position:relative;width:100%;height:100%;border-radius:34px;background:var(--canvas);overflow:hidden;display:flex;flex-direction:column}
+.status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12px;font-weight:600}
+.status span:last-child{letter-spacing:2px}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:6px 16px 4px;flex:none}
+.pill{font-size:12px;font-weight:500;border:1px solid var(--hair);border-radius:999px;padding:6px 11px;display:inline-flex;gap:6px;align-items:center;background:var(--canvas)}
+.pill.audio{border-color:var(--red);color:var(--red)}
+.body{flex:1;padding:10px 18px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.t1{font-size:22px;font-weight:600;line-height:1.18;letter-spacing:-.3px}
+.it{display:block;font-size:12px;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:3px}
+.sub{color:var(--muted);font-size:13px}
+.foot{flex:none;border-top:0;padding:0 18px 16px}
+.prog{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:12px}
+.prog i{height:4px;border-radius:2px;background:var(--hair2);display:block;overflow:hidden;position:relative}
+.prog i b{position:absolute;inset:0;background:var(--yellow);width:var(--p,0%);transition:width .8s ease}
+.nav{display:flex;justify-content:space-between;align-items:center}
+.nav u{font-weight:500}
+.next{background:var(--ink);color:#fff;border-radius:8px;padding:11px 20px;font-weight:500}
+.cta{background:var(--red);color:#fff;border-radius:8px;padding:13px 18px;font-weight:600;text-align:center}
+.home-ind{width:110px;height:4px;border-radius:2px;background:var(--ink);margin:10px auto 0}
+
+/* components */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{border:1px solid var(--hair);border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:8px;font-weight:500;font-size:13px;transition:border-color .25s, background .25s, box-shadow .25s}
+.card svg{width:22px;height:22px}
+.card.on{border:2px solid var(--ink);padding:10px;background:var(--soft)}
+.card i.ph{font-size:24px;color:var(--ink)}
+.row{border:1px solid var(--hair);border-radius:12px;padding:11px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13px}
+.row.on{border:2px solid var(--ink);padding:10px 11px;background:var(--soft)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--hair);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:500;transition:all .25s}
+.chip.on{border:2px solid var(--ink);padding:5px 10px;background:var(--soft)}
+.bubble{font-size:13px;line-height:1.4;border-radius:14px;padding:9px 11px;max-width:92%}
+.bubble.g{background:var(--strong);align-self:flex-start;border-bottom-left-radius:4px}
+.bubble.u{background:var(--ink);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.lang{align-self:center;font-size:11px;font-weight:600;background:var(--yellow);color:var(--ink);border-radius:999px;padding:3px 9px}
+.orbwrap{display:flex;align-items:center;gap:12px}
+.orb{width:54px;height:54px;border-radius:50%;background:var(--red);position:relative;flex:none;display:grid;place-items:center}
+.orb::before,.orb::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--red);opacity:.35;animation:ring 1.8s ease-out infinite}
+.orb::after{animation-delay:.9s}
+.wave{display:flex;gap:3px;align-items:center;height:20px}
+.wave i{width:3px;border-radius:2px;background:#fff;animation:wv 1s ease-in-out infinite;display:block;height:8px}
+.wave i:nth-child(2){animation-delay:.15s}.wave i:nth-child(3){animation-delay:.3s}.wave i:nth-child(4){animation-delay:.45s}
+@keyframes ring{from{transform:scale(1);opacity:.45}to{transform:scale(1.45);opacity:0}}
+@keyframes wv{0%,100%{height:6px}50%{height:18px}}
+.orbtxt{font-size:12px;color:var(--muted)}
+.orbtxt b{display:block;color:var(--ink);font-size:13px}
+.dock{margin:0 14px 10px;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:18px;padding:8px 10px 8px 8px;flex:none}
+.orb.sm{width:34px;height:34px}
+.orb.sm::before,.orb.sm::after{inset:-4px}
+.dock .wave{height:14px}
+.dock .wave i{width:2px}
+.dcap{flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:1.3;min-width:0}
+.dcap .w{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#bdbdbd;margin-right:5px}
+.dcap .w.you{color:var(--yellow)}
+.ln{transition:opacity .25s ease-out}
+.ln[data-t]:not(.on){opacity:0}
+.lang[data-t]:not(.on){opacity:0}
+.lang{transition:opacity .25s ease-out}
+.dx{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none;font-size:12px}
+.big{font-size:48px;font-weight:700;letter-spacing:-1px;line-height:1;text-align:center;font-variant-numeric:tabular-nums}
+.big small{font-size:20px;color:var(--muted);font-weight:500}
+.slider{position:relative;height:28px;margin:6px 4px 0}
+.slider .tr{position:absolute;left:0;right:0;top:12px;height:4px;border-radius:2px;background:var(--hair2)}
+.slider .fill{position:absolute;left:0;top:12px;height:4px;border-radius:2px;background:var(--yellow);width:calc(var(--v) * 10%);transition:width 1.2s ease}
+.slider .knob{position:absolute;top:2px;width:24px;height:24px;border-radius:50%;background:var(--canvas);border:2px solid var(--ink);left:calc(var(--v) * 10% - 12px);transition:left 1.2s ease}
+.slider .decl{position:absolute;top:-2px;left:calc(40% - 1px);width:2px;height:32px;background:var(--muted);opacity:.5}
+.slider.on{--v:2!important}
+.scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:0 2px}
+.verdict{display:flex;justify-content:center;gap:8px;font-size:12px}
+.verdict span{border-radius:999px;padding:4px 10px;background:var(--strong)}
+.verdict span.on{background:var(--yellow)}
+.tests{display:flex;flex-direction:column;gap:6px}
+.tst{display:flex;justify-content:space-between;align-items:center;font-size:12px;border:1px solid var(--hair);border-radius:10px;padding:8px 10px}
+.mk{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--strong);color:var(--muted);transition:all .3s}
+.mk.on.ok{background:var(--yellow);color:var(--ink)}
+.mk.on.no{background:var(--red);color:#fff}
+.read{display:flex;flex-direction:column;gap:7px}
+.rd{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--hair);border-radius:12px;font-size:13px;transition:background .3s,border-color .3s}
+.rd.on{border-color:var(--ink)}
+.rd .ic{width:24px;height:24px;border-radius:50%;border:2px solid var(--hair);display:grid;place-items:center;flex:none;transition:all .3s}
+.rd.on .ic{background:var(--yellow);border-color:var(--yellow)}
+.rd .ic i{font-size:13px;opacity:0;transition:opacity .3s}
+.rd.on .ic i{opacity:1}
+.rd small{display:block;color:var(--muted);font-size:11px}
+.shim{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--strong),var(--hair2),var(--strong));background-size:200% 100%;animation:sh 1.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.goalhead{display:flex;gap:10px;align-items:center}
+.gicon{width:40px;height:40px;border-radius:12px;background:var(--yellow-soft);display:grid;place-items:center;flex:none}
+.gicon i{font-size:22px}
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{border:1px solid var(--hair);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start}
+.step .n{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:grid;place-items:center}
+.step.done .n{background:var(--yellow);color:var(--ink)}
+.step.lock{opacity:.55}
+.step b{font-size:13px;display:block}
+.step .meta{font-size:11px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;border-radius:999px;padding:2px 8px;margin-top:5px;margin-right:4px}
+.tag.fill{background:var(--red);color:#fff}
+.tag.src{background:var(--strong);color:var(--ink)}
+.tag.dl{background:var(--yellow);color:var(--ink)}
+.phrase{background:var(--ink);color:#fff;border-radius:14px;padding:11px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.phrase b{font-size:14px}
+.phrase small{display:block;color:#bbb;font-size:11px}
+.play{width:32px;height:32px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;flex:none}
+.play i{font-size:14px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--canvas);border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);padding:14px 18px 18px;display:flex;flex-direction:column;gap:10px;transform:translateY(0);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kv div{background:var(--soft);border-radius:10px;padding:8px 10px;font-size:12px}
+.kv small{display:block;color:var(--muted);font-size:10.5px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acts .o{border:1px solid var(--ink);border-radius:8px;padding:10px;text-align:center;font-weight:500;font-size:13px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:500}
+.box{width:20px;height:20px;border-radius:5px;border:2px solid var(--ink);display:grid;place-items:center}
+.box.on{background:var(--ink)}
+.box i{font-size:12px;color:#fff}
+.upl{display:flex;flex-direction:column;gap:8px}
+.upl .row svg{width:18px;height:18px}
+.pass{border-radius:12px;height:120px;background:linear-gradient(135deg,#7a1c2a,#a52a3e);position:relative;overflow:hidden;color:#fff;padding:12px}
+.pass .ph{position:absolute;right:12px;top:14px;width:46px;height:58px;border-radius:6px;background:rgba(255,255,255,.25)}
+.pass b{font-size:11px;letter-spacing:.12em}
+.pass .mrz{position:absolute;left:12px;right:12px;bottom:10px;font-family:ui-monospace,monospace;font-size:8.5px;letter-spacing:.06em;opacity:.85}
+.pass .spec{position:absolute;left:38%;top:42%;transform:rotate(-14deg);font-weight:700;font-size:16px;letter-spacing:.2em;color:rgba(255,200,0,.9)}
+.scan{position:absolute;left:0;right:0;height:22px;background:linear-gradient(180deg,transparent,rgba(255,200,0,.55),transparent);top:-22px;animation:scan 2.2s ease-in-out infinite}
+@keyframes scan{to{top:120px}}
+.fields{display:flex;flex-direction:column;gap:0;border:1px solid var(--hair);border-radius:12px;overflow:hidden}
+.fld{padding:7px 11px;border-bottom:1px solid var(--hair);font-size:13px;transition:background .3s}
+.fld:last-child{border-bottom:0}
+.fld small{display:block;color:var(--muted);font-size:10.5px}
+.fld .v{opacity:.15;transition:opacity .4s}
+.fld.on .v{opacity:1}
+.fld.miss{background:var(--yellow-soft)}
+.forms{display:flex;flex-direction:column;gap:7px}
+.frm{border:1px solid var(--hair);border-radius:12px;padding:9px 11px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12.5px}
+.frm b{display:block;font-size:13px}
+.frm small{color:var(--muted);font-size:11px}
+.st{font-size:10.5px;font-weight:600;border-radius:999px;padding:3px 8px;white-space:nowrap}
+.st.ok{background:var(--yellow)}
+.st.mi{background:var(--yellow-soft);border:1px solid var(--yellow)}
+.st.sc{background:var(--strong)}
+.paper{background:var(--canvas);border:1px solid var(--hair);border-radius:6px;box-shadow:var(--shadow);padding:10px;font-size:9.5px;display:flex;flex-direction:column;gap:5px;position:relative}
+.paper .h{font-weight:700;font-size:10px;display:flex;justify-content:space-between}
+.pl{display:grid;grid-template-columns:70px 1fr;gap:6px;align-items:center}
+.pl span{color:var(--muted)}
+.pl i{font-style:normal;border-bottom:1px solid var(--hair);min-height:13px;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--red)}
+.stamp{position:absolute;right:10px;bottom:8px;border:2px solid var(--red);color:var(--red);border-radius:6px;font-weight:700;font-size:9px;padding:2px 6px;transform:rotate(-8deg);opacity:0;transition:opacity .4s}
+.stamp.on{opacity:1}
+.prev{display:flex;flex-direction:column;gap:8px}
+.pv{border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;position:relative}
+.pv b{font-size:14px}
+.pv .badge{position:absolute;right:10px;top:10px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 7px;background:var(--canvas);color:var(--ink)}
+.pv.a{background:var(--soft);border:1px solid var(--hair)}
+.pv.b{background:var(--ink);color:#fff}
+.pv.b .sub{color:#c9c9c9}
+.pv.c{background:var(--yellow-soft);border:1px solid var(--yellow)}
+.spid{align-self:flex-start;background:#0066CC;color:#fff;border-radius:6px;font-size:11px;font-weight:600;padding:6px 10px}
+.gcard{border-radius:16px;overflow:hidden;border:1px solid var(--hair)}
+.gcard .img{height:110px;background:linear-gradient(160deg,#f3efe7,#e9e2d4);position:relative;display:grid;place-items:center}
+.gcard .img > i{font-size:40px;opacity:.75}
+.gcard .img img{width:100%;height:100%;object-fit:contain;padding:6px;display:block}
+.gcard .act{position:absolute;left:10px;top:10px;background:var(--canvas);border-radius:999px;font-size:10.5px;font-weight:600;padding:3px 9px;display:flex;gap:5px;align-items:center}
+.gcard .act i{width:7px;height:7px;border-radius:50%;background:var(--red);display:block}
+.gcard .meta{padding:10px 12px;font-size:12px}
+.gcard .meta b{font-size:14px;display:block}
+.pbar{height:6px;border-radius:3px;background:var(--hair2);overflow:hidden;margin-top:6px}
+.pbar b{display:block;height:100%;width:20%;background:var(--yellow)}
+.addgoal{border:1.5px dashed var(--hair);border-radius:14px;padding:12px;text-align:center;font-weight:500}
+.illu{border-radius:14px;background:linear-gradient(150deg,#f6f2ea,#ece5d7);display:grid;place-items:center;position:relative;overflow:hidden}
+.illu img{width:100%;height:100%;object-fit:cover;display:block}
+.illu > i{font-size:26px;opacity:.7}
+.intro-list{display:flex;flex-direction:column;gap:8px}
+.il{display:grid;grid-template-columns:18px 1fr 64px;gap:8px;align-items:center;padding:9px 10px 9px 12px;border:1px solid var(--hair);border-radius:14px;box-shadow:var(--shadow)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border-radius:16px;box-shadow:var(--shadow);background:var(--canvas);padding:10px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:112px}
+.tile .illu{height:52px;border-radius:10px}
+.tile b{font-size:13px}
+.tile small{color:var(--muted);font-size:11px;line-height:1.3}
+.tile .new{z-index:1;position:absolute;right:8px;top:8px;font-size:8.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 6px;background:var(--canvas);border:1px solid var(--hair)}
+.tile.wide{grid-column:1 / -1;flex-direction:row;align-items:center;min-height:0}
+.tile.wide .illu{width:72px;height:56px;flex:none}
+.il b{font-size:14px;display:block}
+.il small{color:var(--muted);font-size:11.5px}
+.il .num{font-weight:600}
+.il .illu{height:56px;width:64px;border-radius:10px}
+.logo{width:52px;height:52px}
+.typing::after{content:"▍";animation:blink 1s steps(2) infinite;color:var(--muted)}
+@keyframes blink{50%{opacity:0}}
+.xbtn{width:26px;height:26px;border-radius:50%;background:var(--strong);display:grid;place-items:center;font-size:13px}
+
+/* storyboard grid */
+.board h2{font-size:22px;font-weight:600;margin-bottom:6px}
+.board > p{color:var(--muted);margin-bottom:18px;max-width:70ch}
+.cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 20px}
+.cell{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cell .cap{max-width:320px;font-size:13px}
+.cell .cap b{display:block;font-size:14px}
+.cell .cap span{color:var(--muted)}
+.cell .cap em{font-style:normal;font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:1px}
+.cell .cap em.r{background:var(--yellow)}
+.cell .cap em.m{background:var(--strong)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="label">Claude Impact Lab · Track 01 · mockup da approvare</span>
+      <h1>Milano Evolution</h1>
+      <p>Il flusso di Nour nel linguaggio del wizard di Airbnb, con i colori di Milano. Sopra il prototipo che si anima da solo, sotto tutte le schermate. Persone e dati inventati.</p>
+    </div>
+    <div class="swatches" aria-label="Palette">
+      <span class="sw"><i style="background:#A50D26"></i>Rosso Comune · pulsanti, voce</span>
+      <span class="sw"><i style="background:#FFC800"></i>Giallo YesMilano · evidenziati</span>
+      <span class="sw"><i style="background:#222222"></i>Inchiostro</span>
+      <span class="sw"><i style="background:#ffffff"></i>Canvas</span>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Prototipo animato">
+    <div class="phone"><div class="scr" id="stage"></div></div>
+    <div class="hero-side">
+      <span class="label">Prototipo animato</span>
+      <h2>«I need to rent a room»: dalla voce al PDF compilato</h2>
+      <p class="caption" id="cap"></p>
+      <div class="dots" id="dots" role="group" aria-label="Schermate"></div>
+      <div class="ctrl">
+        <button class="btn dark" id="pp" type="button">Pausa</button>
+        <button class="btn" id="rs" type="button">Ricomincia</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="board">
+    <h2>Tutte le schermate</h2>
+    <p>Stato finale di ogni schermata. Etichetta gialla: funziona davvero nella demo. Grigia: anteprima cablata, mostrata nel video.</p>
+    <div class="cells" id="cells"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+const I = {
+  home:'<i class="ph ph-house-line"></i>', doc:'<i class="ph ph-file-text"></i>', health:'<i class="ph ph-first-aid-kit"></i>',
+  tram:'<i class="ph ph-tram"></i>', study:'<i class="ph ph-graduation-cap"></i>', chat:'<i class="ph ph-chats-circle"></i>',
+  plane:'<i class="ph ph-airplane-landing"></i>', bag:'<i class="ph ph-suitcase-rolling"></i>', eu:'<i class="ph ph-globe-hemisphere-west"></i>',
+  pass:'<i class="ph ph-identification-card"></i>', check:'<i class="ph-bold ph-check"></i>', checkw:'<i class="ph-bold ph-check"></i>',
+  play:'<i class="ph-fill ph-play"></i>', speaker:'<i class="ph ph-speaker-high"></i>', cam:'<i class="ph ph-camera"></i>', plus:'<i class="ph ph-plus"></i>',
+  coffee:'<i class="ph ph-coffee"></i>', spid:'<i class="ph ph-fingerprint"></i>', x:'<i class="ph-bold ph-x"></i>',
+  logo:'<svg class="logo" viewBox="0 0 52 52"><rect width="52" height="52" rx="14" fill="#fff" stroke="#ddd"/><path d="M12 36V18l9 11 9-11v12" fill="none" stroke="#A50D26" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="38" cy="33" r="5" fill="#FFC800"/></svg>'
+};
+const status = '<div class="status"><span>9:41</span><span>●●●</span></div>';
+const wizardTop = (audio=true) => `<div class="bar"><span class="pill">Exit</span>${audio?`<span class="pill audio">${I.speaker} Voice on <span aria-label="chiudi audio">✕</span></span>`:`<span class="pill">${I.speaker} Voice off</span>`}</div>`;
+const foot = (p, label='Next', back=true) => `<div class="foot"><div class="prog"><i><b style="--p:${Math.min(100,p*3)}%"></b></i><i><b style="--p:${Math.max(0,Math.min(100,(p-33.4)*3))}%"></b></i><i><b style="--p:${Math.max(0,(p-66.7)*3)}%"></b></i></div><div class="nav">${back?'<u>Back</u>':'<span></span>'}<span class="next">${label}</span></div><div class="home-ind"></div></div>`;
+const dock = (lines) => `<div class="dock"><div class="orb sm"><div class="wave"><i></i><i></i><i></i><i></i></div></div><div class="dcap">${lines}</div><span class="dx" aria-label="turn voice off">${I.x}</span></div>`;
+const g = (t, txt) => `<span class="ln on"${t?` data-t="${t}"`:''}><b class="w">Guide</b><span data-type="${txt}"${t?` data-t="${t}"`:''}>${txt}</span></span>`;
+const y = (t, txt) => `<span class="ln on" data-t="${t}"><b class="w you">You</b><span data-type="${txt}" data-t="${t}">${txt}</span></span>`;
+const orb = (who, txt) => `<div class="orbwrap"><div class="orb"><div class="wave"><i></i><i></i><i></i><i></i></div></div><div class="orbtxt"><b>${who}</b>${txt}</div></div>`;
+
+// Each screen: html with [data-t] elements that switch to class "on" at t ms when the screen plays.
+const S = [
+ { id:'s0', name:'Benvenuto', real:true, dur:4200,
+   cap:'Nour apre l\'app. Un tocco su «Start» avvia il benvenuto a voce; la X lo spegne quando vuole.',
+   html:()=>`${status}<div class="bar"><span></span><span class="xbtn">✕</span></div><div class="body">
+     ${I.logo}
+     <div class="t1">Benvenuta a Milano<span class="it">Welcome to Milan. It's easy to get started.</span></div>
+     <div class="intro-list">
+       <div class="il"><span class="num">1</span><div><b>Tell us about you</b><small>Who you are, once.</small></div><div class="illu" data-illu="step1-arrival">${I.bag}</div></div>
+       <div class="il"><span class="num">2</span><div><b>Tell us what you need</b><small>A room, a doctor, a tram pass.</small></div><div class="illu" data-illu="step2-room">${I.home}</div></div>
+       <div class="il"><span class="num">3</span><div><b>Get it done</b><small>Steps in order, forms filled in.</small></div><div class="illu" data-illu="step3-papers">${I.doc}</div></div>
+     </div>
+   </div><div class="foot"><div class="cta" data-t="1600">Start</div><div class="home-ind"></div></div>`},
+ { id:'s1', name:'Chi sei', real:true, dur:7600,
+   cap:'La guida saluta in italiano, capisce che Nour risponde in inglese e passa all\'inglese. Mentre Nour parla, le card si accendono da sole.',
+   html:()=>`${status}${wizardTop()}<div class="body">
+     <span class="lang on" data-t="3400">Italiano → English</span>
+     <div class="t1">Where are you now?<span class="it">A che punto sei?</span></div>
+     <div class="grid2">
+       <div class="card on" data-t="4300">${I.plane}Just arrived<span class="it" style="margin:0">Appena arrivata</span></div>
+       <div class="card">${I.bag}Coming soon<span class="it" style="margin:0">Sto per arrivare</span></div>
+       <div class="card">${I.eu}EU citizen<span class="it" style="margin:0">Cittadina UE</span></div>
+       <div class="card on" data-t="5000">${I.pass}Non-EU<span class="it" style="margin:0">Extra-UE</span></div>
+     </div>
+   </div>${dock(g(0,'Ciao! Benvenuta a Milano. Sei appena arrivata?')+y(1800,'Hi! English please. I just arrived, from outside the EU.'))}${foot(18)}`},
+ { id:'s1c', name:'Interessi e preoccupazioni', real:true, dur:5200,
+   cap:'Stessa logica a tocco, a voce o a testo: le chip si accendono mentre Nour racconta cosa le piace e cosa la preoccupa.',
+   html:()=>`${status}${wizardTop()}<div class="body">
+     <div class="t1" style="font-size:18px">What do you enjoy?<span class="it">Cosa ti piace?</span></div>
+     <div class="chips"><span class="chip on" data-t="900">Design</span><span class="chip">Music</span><span class="chip on" data-t="1500">Basketball</span><span class="chip">Food</span><span class="chip">Art</span><span class="chip on" data-t="2000">Libraries</span><span class="chip">Nightlife</span></div>
+     <div class="t1" style="font-size:18px">What worries you?<span class="it">Cosa ti preoccupa?</span></div>
+     <div class="chips"><span class="chip on" data-t="3000">Paperwork · Carte</span><span class="chip on" data-t="3600">Finding a room · Casa</span><span class="chip">Money</span><span class="chip on" data-t="4200">Language · Lingua</span><span class="chip">Making friends</span></div>
+   </div>${dock(g(0,'What do you enjoy? And what worries you?')+y(800,'Design, basketball, libraries. I worry about papers and finding a room.'))}${foot(42)}`},
+ { id:'s1t', name:'Test d\'italiano', real:true, dur:7000,
+   cap:'Nour dice «4». La guida fa 3 prove di quel livello, Claude giudica le risposte e la barra scende a «verificato 2».',
+   html:()=>`${status}${wizardTop()}<div class="body">
+     <div class="t1" style="font-size:18px">Your Italian<span class="it">You said 4. Let's check together.</span></div>
+     <div class="big"><span data-swap="4|2" data-t="5200">2</span><small>/10</small></div>
+     <div class="slider on" data-t="5200" style="--v:4"><span class="tr"></span><span class="fill"></span><span class="decl" title="dichiarato"></span><span class="knob"></span></div>
+     <div class="scale"><span>0</span><span>5</span><span>10</span></div>
+     <div class="verdict"><span>declared 4</span><span class="on" data-t="5400">verified 2 · verificato</span></div>
+     <div class="tests">
+       <div class="tst"><span>1 · «Come ti chiami?»</span><span class="mk ok on" data-t="1600">✓</span></div>
+       <div class="tst"><span>2 · Say «Dov'è la stazione?»</span><span class="mk no on" data-t="2900">✕</span></div>
+       <div class="tst"><span>3 · What does «affitto» mean?</span><span class="mk no on" data-t="4200">✕</span></div>
+     </div>
+   </div>${dock(g(0,'Now say: «Dov\'è la stazione?»')+y(2300,'Dove... stazione?'))}${foot(62)}`},
+ { id:'s1b', name:'Cosa ti serve?', real:true, dur:6200,
+   cap:'Il cuore dell\'app. Nour dice cosa vuole fare: la guida riconosce l\'obiettivo e vede che le manca il codice fiscale.',
+   html:()=>`${status}${wizardTop()}<div class="body">
+     <div class="t1">What do you need?<span class="it">Di cosa hai bisogno?</span></div>
+     <div class="grid2">
+       <div class="card y on" data-t="2000">${I.home}A room<span class="it" style="margin:0">Casa</span></div>
+       <div class="card">${I.doc}Tax code<span class="it" style="margin:0">Codice fiscale</span></div>
+       <div class="card">${I.health}A doctor<span class="it" style="margin:0">Medico</span></div>
+       <div class="card">${I.tram}Getting around<span class="it" style="margin:0">Trasporti</span></div>
+       <div class="card">${I.study}Studying<span class="it" style="margin:0">Studio</span></div>
+       <div class="card">${I.chat}Italian<span class="it" style="margin:0">Italiano</span></div>
+     </div>
+   </div>${dock(y(400,'I need to rent a room.')+g(2600,'To rent, you first need a codice fiscale. Shall I make your plan?'))}${foot(85,'Yes, make my plan')}`},
+ { id:'s2', name:'Leggo le guide per te', real:true, dur:5600,
+   cap:'Nour non apre nessun portale: Claude legge dal vivo le guide ufficiali di YesMilano e le spunta una a una.',
+   html:()=>`${status}<div class="bar"><span class="pill">Exit</span><span class="pill audio">${I.speaker} Voice on ✕</span></div><div class="body">
+     <div class="t1" style="font-size:19px">Reading the official guides<span class="it">Sto leggendo le guide ufficiali per te</span></div>
+     <div class="read">
+       <div class="rd on" data-t="700"><span class="ic">${I.check}</span><div>Rents in Milano<small>yesmilano.it · how-to/rents</small></div></div>
+       <div class="rd on" data-t="1700"><span class="ic">${I.check}</span><div>Get your codice fiscale<small>yesmilano.it · how-to/get-italian-tax-code</small></div></div>
+       <div class="rd on" data-t="2700"><span class="ic">${I.check}</span><div>Residence permit for students<small>yesmilano.it · how-to/residence-permit-students</small></div></div>
+       <div class="rd on" data-t="3700"><span class="ic">${I.check}</span><div>Take residence in Milano<small>yesmilano.it · how-to/take-residence-milano-students</small></div></div>
+       <div class="rd on" data-t="4600"><span class="ic">${I.check}</span><div>First steps<small>yesmilano.it · how-to/first-steps</small></div></div>
+     </div>
+     <div class="shim"></div>
+   </div>${dock(g(0,'I\'m reading the official guides for you. One moment.'))}`},
+ { id:'s3', name:'Il piano', real:true, dur:5200,
+   cap:'Il piano per l\'obiettivo, in ordine: cosa portare, dove, quanto ci vuole, entro quando e la fonte. Dove serve, «Fill it for me».',
+   html:()=>`${status}<div class="bar"><span class="pill">‹ Home</span><span class="pill">${I.speaker} Listen</span></div><div class="body" style="gap:10px">
+     <div class="goalhead"><div class="gicon">${I.home}</div><div><div class="t1" style="font-size:18px">Rent a room<span class="it">Affittare una stanza · 0 of 5 done</span></div></div></div>
+     <div class="steps">
+       <div class="step" data-t="300"><span class="n">1</span><div><b>Get your codice fiscale</b><span class="meta">Passport · Agenzia delle Entrate · 1 day · before signing</span><br><span class="tag fill">Fill it for me</span><span class="tag src">yesmilano.it ↗</span></div></div>
+       <div class="step" data-t="700"><span class="n">2</span><div><b>Search safely</b><span class="meta">Never pay before seeing the contract</span><br><span class="tag src">yesmilano.it ↗</span></div></div>
+       <div class="step lock" data-t="1100"><span class="n">3</span><div><b>Registered contract</b><span class="meta">Landlord registers it · Agenzia Entrate</span></div></div>
+       <div class="step lock" data-t="1500"><span class="n">4</span><div><b>Residenza</b><span class="meta">Within 20 days · Comune di Milano</span><br><span class="tag fill">Fill it for me</span></div></div>
+       <div class="step lock" data-t="1900"><span class="n">5</span><div><b>TARI</b><span class="meta">Within 90 days · Comune di Milano</span><br><span class="tag fill">Fill it for me</span></div></div>
+     </div>
+     <div class="phrase"><div><b>«Vorrei il codice fiscale»</b><small>I'd like a tax code · say it at the counter</small></div><span class="play">${I.play}</span></div>
+   </div>`},
+ { id:'s4', name:'Fallo con me', real:true, dur:5000,
+   cap:'Tocca un passo: spiegazione semplice, «Listen» se vuole sentirla, domande alla guida a voce o a testo, poi «done».',
+   html:()=>`${status}<div class="body" style="opacity:.35"><div class="t1" style="font-size:18px">Rent a room</div><div class="steps"><div class="step"><span class="n">1</span><div><b>Get your codice fiscale</b></div></div><div class="step"><span class="n">2</span><div><b>Search safely</b></div></div></div></div>
+     <div class="scrim"></div>
+     <div class="sheet">
+       <div style="display:flex;justify-content:space-between;align-items:center"><span class="label">Do it with me</span><span class="xbtn">✕</span></div>
+       <div class="t1" style="font-size:19px">Get your codice fiscale<span class="it">Il codice fiscale ti serve per firmare il contratto</span></div>
+       <p class="sub" style="color:var(--body)">It's your Italian tax number. You need it to sign a rental contract. It takes one visit and it's free.</p>
+       <div class="kv"><div><small>Bring · Porta</small>Passport + visa</div><div><small>Where · Dove</small>Agenzia Entrate</div><div><small>How long</small>About 1 day</div><div><small>Deadline</small>Before signing</div></div>
+       <div class="acts"><span class="o">${I.speaker} Listen</span><span class="o">Ask the guide</span></div>
+       <div class="cta">Fill it for me</div>
+       <div class="check"><span class="box on" data-t="3600">${I.checkw}</span> Mark as done</div>
+     </div>`},
+ { id:'s5', name:'Passaporto', real:true, dur:5400,
+   cap:'Foto del passaporto (qui uno SPECIMEN inventato): Claude legge i campi, Nour li conferma o li corregge.',
+   html:()=>`${status}<div class="bar"><span class="pill">‹ Back</span><span class="pill">Help</span></div><div class="body">
+     <div class="t1" style="font-size:19px">Add a photo of your passport<span class="it">We read it for you. Nothing is stored. · Non salviamo nulla.</span></div>
+     <div class="pass"><b>PASSPORT</b><span class="ph"></span><span class="spec">SPECIMEN</span><span class="mrz">P&lt;XXXNOUR&lt;&lt;SAMPLE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>X0000000&lt;0XXX0001019F3001017&lt;&lt;&lt;</span><span class="scan"></span></div>
+     <div class="fields">
+       <div class="fld on" data-t="1200"><small>Surname · Cognome</small><span class="v">SAMPLE</span></div>
+       <div class="fld on" data-t="1800"><small>Given names · Nome</small><span class="v">NOUR</span></div>
+       <div class="fld on" data-t="2400"><small>Date of birth · Data di nascita</small><span class="v">01/01/2000</span></div>
+       <div class="fld on" data-t="3000"><small>Nationality · Cittadinanza</small><span class="v">Non-EU (sample)</span></div>
+       <div class="fld on" data-t="3600"><small>Passport no. · N. passaporto</small><span class="v">X0000000</span></div>
+     </div>
+   </div>${foot(100,'Looks good',true)}`},
+ { id:'s6', name:'Moduli e PDF', real:true, dur:6400,
+   cap:'I moduli si precompilano. L\'AA4/8 è pronto e si scarica in PDF compilato; residenza e TARI chiedono solo i campi che mancano.',
+   html:()=>`${status}<div class="bar"><span class="pill">‹ Plan</span><span class="pill">Help</span></div><div class="body" style="gap:10px">
+     <div class="t1" style="font-size:19px">Your forms<span class="it">I tuoi moduli · check and sign · controlla e firma</span></div>
+     <div class="paper">
+       <div class="h"><span>Modello AA4/8 · Codice fiscale</span><span>Agenzia Entrate</span></div>
+       <div class="pl"><span>Cognome</span><i data-type="SAMPLE" data-t="300">SAMPLE</i></div>
+       <div class="pl"><span>Nome</span><i data-type="NOUR" data-t="900">NOUR</i></div>
+       <div class="pl"><span>Data nascita</span><i data-type="01/01/2000" data-t="1500">01/01/2000</i></div>
+       <div class="pl"><span>Stato estero</span><i data-type="Non-EU (sample)" data-t="2100">Non-EU (sample)</i></div>
+       <span class="stamp on" data-t="3200">READY</span>
+     </div>
+     <div class="forms">
+       <div class="frm"><div><b>AA4/8 · Tax code</b><small>Agenzia delle Entrate</small></div><span class="tag dl" style="margin:0" data-t="3400">⤓ PDF</span></div>
+       <div class="frm"><div><b>Residenza</b><small>2 fields left: address, housing</small></div><span class="st mi">2 left</span></div>
+       <div class="frm"><div><b>TARI</b><small>2 fields left: m², start date</small></div><span class="st mi">2 left</span></div>
+       <div class="frm"><div><b>Modulo 1 · Permesso</b><small>Postal kit · on screen</small></div><span class="st sc">card</span></div>
+     </div>
+   </div>`},
+ { id:'s8', name:'Home', real:true, dur:4000,
+   cap:'Dopo l\'onboarding è un\'app normale, a tocco e in silenzio. Ogni obiettivo è una card con il suo avanzamento.',
+   html:()=>`${status}<div class="bar"><span class="pill">Profile</span><span class="pill">${I.speaker} Voice off</span></div><div class="body">
+     <div class="t1">Hi Nour<span class="it">Ciao Nour · your goals · i tuoi obiettivi</span></div>
+     <div class="gcard"><div class="img" data-illu="step2-room" style="height:80px">${I.home}<span class="act"><i></i>Action required</span></div><div class="meta"><b>Rent a room</b>1 of 5 done · next: search safely<div class="pbar"><b></b></div></div></div>
+     <div class="tiles">
+       <div class="tile"><div class="illu" data-illu="step3-papers">${I.doc}</div><b>Your forms</b><small>1 PDF ready · 2 to finish</small></div>
+       <div class="tile"><div class="illu" data-illu="step1-arrival">${I.chat}</div><b>Your Italian</b><small>verified 2 · next test in 7 days</small></div>
+       <div class="tile"><span class="new">new</span><div class="illu" data-illu="step4-coffee">${I.chat}</div><b>Parlami in italiano</b><small>Coffee with a Milanese</small></div>
+       <div class="tile"><span class="new">new</span><div class="illu">${I.pass}</div><b>Fascicolo + SPID</b><small>Save your profile once</small></div>
+       <div class="tile wide"><div class="illu">${I.plus}</div><div><b>New goal</b><br><small>A doctor, a tram pass, a course…</small></div></div>
+     </div>
+   </div>`},
+ { id:'s7', name:'Anteprime', real:false, dur:4600,
+   cap:'Flussi futuri, cablati e mostrati nel video: profilo nel Fascicolo con SPID, «Parlami in italiano», Talent card.',
+   html:()=>`${status}<div class="bar"><span class="pill">‹ Home</span><span class="pill">Preview · Anteprima</span></div><div class="body" style="gap:10px">
+     <div class="t1" style="font-size:19px">Next stops<span class="it">Prossime fermate</span></div>
+     <div class="prev">
+       <div class="pv a"><span class="badge">soon</span><b>Save to Fascicolo</b><span class="sub">Say it once, with SPID: your profile moves into the City's Fascicolo del Cittadino.</span><span class="spid">Entra con SPID</span></div>
+       <div class="pv b"><span class="badge">soon</span><b>Parlami in italiano</b><span class="sub">Coffee in Italian with Giuseppe, a Milanese volunteer. Biblioteca Sormani, Thu 17:00.</span></div>
+       <div class="pv c"><span class="badge">soon</span><b>Talent card</b><span class="sub">With your consent, Milan companies find you before you graduate.</span></div>
+     </div>
+   </div>`}
+];
+
+const ILLU = 'illustrations/';
+function render(s){ return s.html(); }
+function applyIllu(root){
+  root.querySelectorAll('[data-illu]').forEach(el=>{
+    const img = new Image(); img.alt=''; img.src = ILLU + el.dataset.illu + '.webp';
+    img.onload = ()=>{ const svg=el.querySelector('svg'); if(svg) svg.remove(); el.prepend(img); };
+  });
+}
+
+// storyboard at rest
+const cells = document.getElementById('cells');
+cells.innerHTML = S.map(s=>`<div class="cell"><div class="phone"><div class="scr">${render(s)}</div></div><div class="cap"><b>${s.name}<em class="${s.real?'r':'m'}">${s.real?'reale':'anteprima'}</em></b><span>${s.cap}</span></div></div>`).join('');
+applyIllu(cells);
+
+// autoplay engine
+const stage=document.getElementById('stage'), cap=document.getElementById('cap'), dots=document.getElementById('dots');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let idx=0, timers=[], playing=!reduce;
+dots.innerHTML = S.map((s,i)=>`<button type="button" data-i="${i}">${s.name}</button>`).join('');
+dots.addEventListener('click',e=>{const b=e.target.closest('button'); if(b){show(+b.dataset.i);}});
+function clear(){ timers.forEach(clearTimeout); timers=[]; }
+function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
+function typeIt(el, txt){ el.textContent=''; el.classList.add('typing'); let i=0; const step=()=>{ el.textContent=txt.slice(0,++i); if(i<txt.length) at(28,step); else el.classList.remove('typing'); }; step(); }
+function show(i){
+  clear(); idx=(i+S.length)%S.length; const s=S[idx];
+  stage.innerHTML=render(s); applyIllu(stage);
+  cap.innerHTML = s.cap + `<small>${idx+1} / ${S.length} · ${s.real?'funziona davvero nella demo':'anteprima cablata'}</small>`;
+  dots.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-current', String(j===idx)));
+  if(reduce) return;
+  stage.querySelectorAll('[data-t]').forEach(el=>{
+    el.classList.remove('on');
+    if(el.dataset.swap){ const [a,b]=el.dataset.swap.split('|'); el.textContent=a; at(+el.dataset.t,()=>{el.textContent=b;}); }
+    if(el.dataset.type){ el.textContent=''; at(+el.dataset.t,()=>typeIt(el, el.dataset.type)); }
+    at(+el.dataset.t,()=>el.classList.add('on'));
+  });
+  stage.querySelectorAll('[data-type]:not([data-t])').forEach(el=>typeIt(el, el.dataset.type));
+  if(playing) at(s.dur,()=>show(idx+1));
+}
+const pp=document.getElementById('pp');
+pp.addEventListener('click',()=>{ playing=!playing; pp.textContent=playing?'Pausa':'Play'; if(playing) show(idx); else clear(); });
+document.getElementById('rs').addEventListener('click',()=>{ playing=true; pp.textContent='Pausa'; show(0); });
+if(reduce){ pp.textContent='Play'; }
+show(0);
+})();
+</script>
