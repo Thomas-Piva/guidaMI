@@ -163,8 +163,8 @@ GuidaMI starts with the person who arrives. The same data can serve two more sid
 ## Run it
 
 ```bash
-git clone https://github.com/Thomas-Piva/milano-evolution
-cd milano-evolution/web
+git clone https://github.com/Thomas-Piva/guidaMI
+cd guidaMI/web
 cp ../.env.example .env.local   # add ANTHROPIC_API_KEY and ELEVENLABS_API_KEY
 npm install
 node scripts/create-agent.mjs  # creates the ElevenLabs agent, writes ELEVENLABS_AGENT_ID
