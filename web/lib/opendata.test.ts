@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck -- runOpendataTool returns unknown; the assertions read its JSON shape directly.
 import { describe, expect, test } from "vitest";
 import { runOpendataTool } from "./opendata";
 
