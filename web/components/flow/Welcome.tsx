@@ -20,11 +20,8 @@ export default function Welcome({ onStart, onSkipVoice }: Props) {
         <button type="button" className="xbtn" onClick={onSkipVoice} aria-label="Start without voice">✕</button>
       </div>
       <div className="body">
-        <svg className="logo" viewBox="0 0 52 52" aria-label="Milano Evolution" role="img">
-          <rect width="52" height="52" rx="14" fill="#fff" stroke="#ddd" />
-          <path d="M12 36V18l9 11 9-11v12" fill="none" stroke="#A50D26" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="38" cy="33" r="5" fill="#FFC800" />
-        </svg>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="logo" src="/logo.png" alt="GuidaMI" width={52} height={52} style={{ borderRadius: 14 }} />
         <h1 className="t1">
           Benvenuta a Milano<span className="it">Welcome to Milan. It&apos;s easy to get started.</span>
         </h1>

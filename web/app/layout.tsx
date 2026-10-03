@@ -6,9 +6,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Milano Evolution",
+  title: "GuidaMI",
   description: "Your guide to Milan: tell it what you need, get the steps in order and the forms filled in.",
-  appleWebApp: { capable: true, title: "Milano Evolution", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "GuidaMI", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

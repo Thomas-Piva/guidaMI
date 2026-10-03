@@ -1,19 +1,17 @@
 "use client";
-import type { ReactNode } from "react";
-import { ChatsCircleIcon, FileTextIcon, FirstAidKitIcon, GraduationCapIcon, HouseLineIcon, TramIcon } from "@phosphor-icons/react";
 
 export type Props = {
   goal?: string; // active goal label, e.g. "Rent a room" (from set_goal or touch)
   onSelect: (goal: string) => void; // called with the need's goal label
 };
 
-export const NEEDS: { goal: string; en: string; it: string; icon: ReactNode; match: RegExp }[] = [
-  { goal: "Rent a room", en: "A room", it: "Casa", icon: <HouseLineIcon />, match: /room|rent|house|flat|apartment|casa|stanza|affitt/ },
-  { goal: "Get a tax code", en: "Tax code", it: "Codice fiscale", icon: <FileTextIcon />, match: /tax|fiscal/ },
-  { goal: "Find a doctor", en: "A doctor", it: "Medico", icon: <FirstAidKitIcon />, match: /doctor|medic|health|gp\b/ },
-  { goal: "Get around", en: "Getting around", it: "Trasporti", icon: <TramIcon />, match: /tram|metro|bus|transport|atm|around|travel/ },
-  { goal: "Studying", en: "Studying", it: "Studio", icon: <GraduationCapIcon />, match: /stud|universit|course|school/ },
-  { goal: "Learn Italian", en: "Italian", it: "Italiano", icon: <ChatsCircleIcon />, match: /italian|language|lingua/ },
+export const NEEDS: { goal: string; en: string; it: string; icon: string; match: RegExp }[] = [
+  { goal: "Rent a room", en: "A room", it: "Casa", icon: "room", match: /room|rent|house|flat|apartment|casa|stanza|affitt/ },
+  { goal: "Get a tax code", en: "Tax code", it: "Codice fiscale", icon: "taxcode", match: /tax|fiscal/ },
+  { goal: "Find a doctor", en: "A doctor", it: "Medico", icon: "doctor", match: /doctor|medic|health|gp\b/ },
+  { goal: "Get around", en: "Getting around", it: "Trasporti", icon: "tram", match: /tram|metro|bus|transport|atm|around|travel/ },
+  { goal: "Studying", en: "Studying", it: "Studio", icon: "study", match: /stud|universit|course|school/ },
+  { goal: "Learn Italian", en: "Italian", it: "Italiano", icon: "italian", match: /italian|language|lingua/ },
 ];
 
 /** Maps a free goal string from the voice tool to one of the six cards (or undefined). */
@@ -32,7 +30,8 @@ export default function NeedGoal({ goal, onSelect }: Props) {
           const on = n === lit;
           return (
             <button key={n.goal} type="button" className={`card${on ? " on" : ""}`} aria-pressed={on} onClick={() => onSelect(n.goal)}>
-              {n.icon}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/icons3d/${n.icon}.webp`} alt="" width={52} height={52} style={{ objectFit: "contain", mixBlendMode: "multiply" }} />
               {n.en}
               <span className="it" style={{ margin: 0 }}>{n.it}</span>
             </button>

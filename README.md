@@ -1,8 +1,35 @@
-# GuidaMI
+<p align="center">
+  <img src="docs/img/icon.png" width="96" alt="GuidaMI icon">
+</p>
+
+<h1 align="center">Guida<b>MI</b></h1>
+
+<p align="center"><i>Arrive in Milan. Say what you need. Get the steps, the office and the filled forms.</i></p>
+
+<p align="center">
+  <a href="https://guidami-milano.vercel.app"><img alt="Live app" src="https://img.shields.io/badge/Live_app-guidami--milano.vercel.app-00A3E0"></a>
+  <a href="https://guidami-milano.vercel.app/?demo=1"><img alt="Demo" src="https://img.shields.io/badge/Demo-%2F%3Fdemo%3D1-FFC20E"></a>
+  <img alt="Track 01" src="https://img.shields.io/badge/Track-01-black">
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/Licence-MIT-green"></a>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white">
+  <img alt="Claude" src="https://img.shields.io/badge/Claude-D97757?logo=anthropic&logoColor=white">
+  <img alt="ElevenLabs" src="https://img.shields.io/badge/ElevenLabs-111111">
+</p>
+
+<p align="center">
+  <img src="docs/img/welcome.png" width="160" alt="Welcome screen">
+  <img src="docs/img/need.png" width="160" alt="What do you need?">
+  <img src="docs/img/plan.png" width="160" alt="Plan in dependency order">
+  <img src="docs/img/passport.png" width="160" alt="Passport photo">
+  <img src="docs/img/forms.png" width="160" alt="Forms ready to check and sign">
+</p>
+<p align="center"><sub>Welcome, need, plan, passport, forms. Sample data, fictional persona.</sub></p>
 
 > Claude Impact Lab Milano · 3 October 2026 · Track 01 · Welcome journey for people arriving in Milan
 
 **One line:** for a student who just landed in Milan and speaks no Italian, GuidaMI understands what she needs ("I need to rent a room"), reads the City's official guides and open data for her, tells her the steps in order with the right office nearby, and fills in the forms from a photo of her passport. She never opens a portal.
+
+**Demo video:** _link added at submission_ (local files: `video/demo/`, `video/brag/`)
 
 **Demo video:** _link added at submission_ (local files: `video/demo/`, `video/brag/`)
 
@@ -22,9 +49,27 @@ A mobile-first PWA, voice first at the start, then a normal touch app with optio
 6. **The plan.** 3 to 5 steps in dependency order (codice fiscale, safe room search, registered contract, residenza within 20 days, TARI). Each step says what to bring, where, how long, the deadline, the nearest office from the City's open data and the source page.
 7. **"Do it with me".** Tap a step: plain explanation, Listen, ask the guide, open the official app, mark as done.
 8. **Fill it for me.** Take a photo of the passport (a SPECIMEN is included): the fields appear on screen to confirm or correct, the forms fill in, and she downloads the filled PDFs of the AA4/8 tax code form, the residence declaration and the TARI declaration. She checks and signs.
-9. **Previews** of what comes next: profile in the Fascicolo del Cittadino with SPID, "Parlami in italiano" coffees with Milanese volunteers, a Talent card so Milan companies find graduates before they leave.
+9. **City news.** She asks "what is on in Milan?" and the voice guide reads today's City news (Comune press releases, YesMilano events), always with the source.
+10. **Previews** of what comes next: profile in the Fascicolo del Cittadino with SPID, "Parlami in italiano" coffees with Milanese volunteers, a Talent card so Milan companies find graduates before they leave.
 
 Design: the approved mockup in [`design/mockups/index.html`](design/mockups/index.html) is the UI contract (Airbnb wizard language, YesMilano Study & Work colours).
+
+## Architecture
+
+```mermaid
+flowchart LR
+  P["Person<br/>voice or touch"] --> A["ElevenLabs agent<br/>claude-haiku-4-5<br/>client tools"]
+  A --> N["Next.js API"]
+  N --> PL["/api/plan<br/>claude-sonnet-5-5 tool loop<br/>read_guide, city_procedure,<br/>find_places, show_plan"]
+  N --> PA["/api/passport<br/>vision"]
+  N --> F["/api/forms/pdf<br/>pdf-lib"]
+  N --> NW["/api/news<br/>get_news"]
+  PL --> S1["66 YesMilano and<br/>Study and Work guides"]
+  PL --> S2["585 comune.milano.it<br/>procedures"]
+  PL --> S3["8 CKAN open datasets"]
+  F --> S4["Official PDF forms"]
+  NW --> S5["Comune press releases,<br/>YesMilano events"]
+```
 
 ## Where Claude works
 
@@ -35,8 +80,9 @@ Claude runs every time someone uses GuidaMI. Three places:
   - `claude-sonnet-5-5` for the plan (tool loop) and for reading the passport photo (vision).
 - **What it does at runtime**
   - Holds the onboarding conversation in the person's language (Italian first, automatic language detection, English, Chinese, Spanish, Arabic).
-  - Fills the profile through client tools while she talks: `update_profile`, `set_italian_level`, `set_goal`, `show_screen`, `request_passport`, `open_service`.
+  - Fills the profile through client tools while she talks: `update_profile`, `set_italian_level`, `set_goal`, `show_screen`, `request_passport`, `open_service`, `get_news`.
   - Judges the three Italian checks and sets the verified level.
+  - Answers "what is happening in Milan?" with `get_news` (`GET /api/news`): up to 3 current items from Comune di Milano press releases and YesMilano events, always read out with date and source.
   - Builds the plan for her goal (`POST /api/plan`):
     - reads the relevant guides with `read_guide` (66 YesMilano and Study & Work pages, live, with a dated snapshot as fallback);
     - looks up official procedures with `city_procedure` (585 comune.milano.it service pages plus curated facts);
@@ -46,6 +92,7 @@ Claude runs every time someone uses GuidaMI. Three places:
 - **Prompts and tools**
   - Voice agent prompt: [`web/lib/agent-prompt.md`](web/lib/agent-prompt.md); agent and client tools: [`web/scripts/create-agent.mjs`](web/scripts/create-agent.mjs).
   - Planner prompt and tool loop: [`web/app/api/plan/route.ts`](web/app/api/plan/route.ts), [`web/lib/claude.ts`](web/lib/claude.ts); guides: [`web/lib/guides.ts`](web/lib/guides.ts); open data tools: [`web/lib/opendata.ts`](web/lib/opendata.ts).
+  - City news: [`web/app/api/news/route.ts`](web/app/api/news/route.ts), [`web/lib/news.ts`](web/lib/news.ts).
   - Passport vision: [`web/app/api/passport/route.ts`](web/app/api/passport/route.ts).
   - Form filling is deterministic code, not AI: [`web/lib/forms.ts`](web/lib/forms.ts), [`web/app/api/forms/pdf/route.ts`](web/app/api/forms/pdf/route.ts) with pdf-lib.
 - **What it decides, and what a human confirms**
@@ -98,6 +145,20 @@ All public, retrieved 3 October 2026. Full table: [`docs/DATA_SOURCES.md`](docs/
   - Profile saved in the Fascicolo del Cittadino.
   - "Parlami in italiano": Milanese volunteers, modelled on Barcelona's Voluntariat per la Llengua.
   - Talent card for companies.
+
+## The vision
+
+GuidaMI starts with the person who arrives. The same data can serve two more sides.
+
+| Side | Idea | Status |
+|---|---|---|
+| **Person** | Paperwork in the right order, filled forms, Italian check | Built |
+| **Person** | Voice guide that knows today's City news | Built |
+| **Person** | Community "Parlami in italiano": coffees with Milanese volunteers | Concept, preview screen only |
+| **Company** | Talent card with the student's consent, so companies find graduates before they leave | Concept, preview screen only |
+| **Company** | Study-to-work permit pre-filled | Concept |
+| **City** | One link in the welcome email | Concept (needs the Comune) |
+| **City** | Anonymous dashboard of unanswered questions and deadlines | Concept |
 
 ## Run it
 

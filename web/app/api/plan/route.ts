@@ -11,7 +11,7 @@ export const maxDuration = 60;
 const MAX_TURNS = 6;
 const PLAN_FORMAT = zodOutputFormat(PlanSchema);
 
-const SYSTEM = `You are the planner inside "Milano Evolution", a welcome app for international students who just arrived in Milan.
+const SYSTEM = `You are the planner inside "GuidaMI", a welcome app for international students who just arrived in Milan.
 You build a short, ordered plan for ONE goal the student stated. Work only from the official YesMilano guides you read with read_guide.
 
 How to work:

@@ -104,7 +104,7 @@ const tick = (page: PDFPage, x: number, yTop: number, font: PDFFont) =>
   page.drawText("X", { x, y: page.getHeight() - yTop, size: 10, font, color: rgb(0.05, 0.1, 0.45) });
 
 function note(page: PDFPage, font: PDFFont, x: number, yTop: number) {
-  const lines = ["Pre-filled by Milano Evolution · check and sign", "Precompilato da Milano Evolution · controlla e firma"];
+  const lines = ["Pre-filled by GuidaMI · check and sign", "Precompilato da GuidaMI · controlla e firma"];
   const w = Math.max(...lines.map((l) => font.widthOfTextAtSize(l, 7))) + 10;
   const y = page.getHeight() - yTop;
   page.drawRectangle({ x, y: y - 20, width: w, height: 22, color: rgb(1, 0.784, 0) }); // #FFC800
