@@ -174,3 +174,10 @@ Seguono i quattro tempi di SUBMISSION.md (20/60/20/20 secondi):
 4. Browser su localhost: la guida parte in italiano, passa all'inglese, la scheda si riempie, il test d'italiano sposta la barra, il piano arriva dopo il sì, «Fallo con me» spiega un passo, la spunta sblocca il successivo, i pulsanti aprono le app ufficiali.
 5. Screenshot su 3 dispositivi con `verify-ui`, console pulita; sul telefono via HTTPS (Vercel) PWA installabile e microfono attivo.
 6. `vitest` verde; repo senza chiavi; README completo; video caricato; submission entro le 15:55.
+
+## Adattamento al repo dell'hackathon (Claude-Milano/impact-lab-oct-2026, ricontrollato alle 14:40)
+Il repo non è cambiato da ieri sera. Dal brief della Track 01 e da SUBMISSION.md aggiungiamo:
+1. **Avvisi proattivi** (il «Watch out» e il quarto passo del brief: «quali, quando, con quali dati»): nella home una card «Upcoming deadlines» calcolata dalle scadenze del piano (permesso entro 8 giorni, residenza entro 20, TARI entro 90) con notifica opzionale; nel README e nella slide 4 la tabella degli avvisi della versione 2 con i dati necessari (data d'arrivo dal Comune, stato della pratica di residenza, ANPR via PDND, consenso).
+2. **Open data del Comune come knowledge base** (DATA.md): ds549 sedi anagrafe, ds1299 municipi, ds550 patronati, ds94 atenei, ds535 fermate metro, più le pagine procedure del Comune e di YesMilano; strumenti `find_places`, `city_procedure`, `list_sources` nel tool loop del piano, sempre con fonte; periodo coperto dichiarato nel README.
+3. **Consegna**: README da `templates/PROJECT_README.md` con traccia, «Where Claude works» (modelli, prompt, tool, cosa decide Claude e cosa conferma la persona), dati e periodo; video di 2 minuti con link pubblico; issue «Submission» (azione esterna: da confermare con Thomas prima dell'invio); nessun dato personale nemmeno in screenshot e video; nessuna chiave nel repo.
+4. **Rifinitura UI richiesta da Thomas**: padding generoso e spaziatura in stile Airbnb (24px ai lati, ritmo verticale 24-32px tra blocchi, card con 16-20px di padding interno).
