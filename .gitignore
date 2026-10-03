@@ -18,3 +18,4 @@ docs/*.mp4
 .env.*
 !.env.example
 pitch/SPEECH.md
+!pitch/guidami-demo.mp4
