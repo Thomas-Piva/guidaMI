@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { ChatsCircleIcon, FileTextIcon, IdentificationCardIcon, PlusIcon, SpeakerHighIcon } from "@phosphor-icons/react";
+import { PlusIcon, SpeakerHighIcon } from "@phosphor-icons/react";
 import type { Goal } from "@/lib/types";
 import { UiStyle, goalArt, icon3d, illuSrc } from "./shared";
 
@@ -21,6 +21,15 @@ export type HomeProps = {
 };
 
 const tileBtn: CSSProperties = { textAlign: "left" };
+
+function Art({ n }: { n: string }) {
+  return (
+    <div className="illu" style={{ minWidth: 0, background: "var(--soft)" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`/icons3d/${n}.webp`} alt="" width={46} height={46} style={{ width: 46, height: 46, objectFit: "contain", mixBlendMode: "multiply" }} />
+    </div>
+  );
+}
 
 function Illu({ name, icon, style }: { name?: string; icon: ReactNode; style?: CSSProperties }) {
   return (
@@ -85,24 +94,24 @@ export default function Home({ name, goals, italianVerified, forms, voiceOn = fa
 
         <div className="tiles">
           <button type="button" className="tile meb" style={tileBtn} onClick={onForms} disabled={!onForms}>
-            <Illu name="step3-papers" icon={<FileTextIcon size={26} />} />
+            <Art n="form" />
             <b>Your forms</b>
             <small>{forms ? `${forms.ready} PDF ready · ${forms.toFinish} to finish` : "From your plan · dal tuo piano"}</small>
           </button>
           <button type="button" className="tile meb" style={tileBtn} onClick={onItalian} disabled={!onItalian}>
-            <Illu name="step1-arrival" icon={<ChatsCircleIcon size={26} />} />
+            <Art n="italian" />
             <b>Your Italian</b>
             <small>{italianVerified !== undefined ? `verified ${italianVerified} · next test in 7 days` : "Not checked yet · da verificare"}</small>
           </button>
-          <button type="button" className="tile meb" style={tileBtn} onClick={onPreviews}>
+          <button type="button" className="tile meb" style={tileBtn} onClick={() => (location.href = "/concept?s=parlami")}>
             <span className="new">new</span>
-            <Illu name="step4-coffee" icon={<ChatsCircleIcon size={26} />} />
+            <Art n="coffee" />
             <b>Parlami in italiano</b>
-            <small>Coffee with a Milanese</small>
+            <small>A coffee with a Milanese · Un caffè con un milanese</small>
           </button>
-          <button type="button" className="tile meb" style={tileBtn} onClick={onPreviews}>
+          <button type="button" className="tile meb" style={tileBtn} onClick={() => (location.href = "/concept?s=fascicolo")}>
             <span className="new">new</span>
-            <Illu icon={<IdentificationCardIcon size={26} />} />
+            <Art n="spid" />
             <b>Fascicolo + SPID</b>
             <small>Save your profile once</small>
           </button>

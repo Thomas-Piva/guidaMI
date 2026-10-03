@@ -25,6 +25,10 @@ export default function Welcome({ onStart, onSkipVoice }: Props) {
         <h1 className="t1">
           Benvenuta a Milano<span className="it">Welcome to Milan. It&apos;s easy to get started.</span>
         </h1>
+        <p className="sub" style={{ fontSize: 12, lineHeight: 1.5, margin: "-4px 0 0" }}>
+          You are talking with an AI assistant. It shows its sources, you decide. Want a person? Call 020202.
+          <span className="it" style={{ display: "block" }}>Stai parlando con un assistente IA. Vuoi una persona? Chiama lo 020202.</span>
+        </p>
         <div className="intro-list">
           {STEPS.map((s, i) => (
             <div className="il" key={s.img}>

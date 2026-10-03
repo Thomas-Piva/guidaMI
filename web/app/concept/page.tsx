@@ -7,10 +7,10 @@ const Ico = ({ n, s = 44 }: { n: string; s?: number }) => (
   <img src={`/icons3d/${n}.webp`} alt="" width={s} height={s} style={{ objectFit: "contain", mixBlendMode: "multiply", flex: "none" }} />
 );
 
-const Bar = ({ left, right = "Concept" }: { left: string; right?: string }) => (
+const Bar = ({ left, right = "Preview · Anteprima" }: { left: string; right?: string }) => (
   <div className="bar">
-    <span className="pill">{left}</span>
-    <span className="pill" style={{ background: "var(--yellow)", borderColor: "var(--yellow)" }}>{right}</span>
+    <a className="pill" href="/?demo=1&screen=home">{left}</a>
+    <span className="pill">{right}</span>
   </div>
 );
 
@@ -147,7 +147,7 @@ const SCREENS: Record<string, () => React.ReactNode> = {
   ),
   comune: () => (
     <>
-      <Bar left="Comune · City" right="Concept · anonymous" />
+      <Bar left="Comune · City" right="Anonymous · Anonimo" />
       <div className="body" style={{ gap: 12 }}>
         <div className="t1">What newcomers need<span className="it">Cosa serve a chi arriva</span></div>
         <div className="kv">
