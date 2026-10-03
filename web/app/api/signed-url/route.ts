@@ -1,9 +1,12 @@
-// GET /api/signed-url -> {signedUrl} | 503 {error:"missing_keys"} | 502 {error}
+// GET /api/signed-url -> {signedUrl} | 429 {error:"rate_limited"} | 503 {error:"missing_keys"} | 502 {error}
 // The ElevenLabs key never reaches the browser: the client only gets a short-lived signed WebSocket URL.
 import { connection } from "next/server";
+import { jsonError, overLimit } from "../../../lib/claude";
 
-export async function GET() {
+export async function GET(req: Request) {
   await connection(); // always at request time, never prerendered
+  // Every signed URL is a billed voice session (Haiku + TTS): same per-IP + daily ceiling as plan and passport.
+  if (overLimit(req, "voice", 5, 150)) return jsonError("rate_limited", 429);
   const key = process.env.ELEVENLABS_API_KEY;
   const agentId = process.env.ELEVENLABS_AGENT_ID;
   if (!key || !agentId) return Response.json({ error: "missing_keys" }, { status: 503 });

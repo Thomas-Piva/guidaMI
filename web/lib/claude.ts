@@ -17,19 +17,28 @@ export const missingKeys = () => jsonError("missing_keys", 503);
 
 // ---- Rate limit -------------------------------------------------------------
 // ponytail: in-memory sliding window per server instance; swap for KV/Upstash if the demo goes public.
-const hits = new Map<string, number[]>();
+// Daily ceilings (`<route>:all`) live in their own map and are never evicted: flooding per-IP keys
+// (spoofed IPs) can reset per-IP counters at worst, never the spending caps.
+const hits = new Map<string, number[]>(); // per IP, 1-minute windows
+const totals = new Map<string, number[]>(); // global, one key per route
+const MAX_KEYS = 5_000;
 
 export function rateLimited(key: string, max: number, windowMs: number, now = Date.now()): boolean {
-  if (hits.size > 5_000) hits.clear();
-  const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
+  const store = key.endsWith(":all") ? totals : hits;
+  if (store === hits && hits.size > MAX_KEYS) {
+    for (const [k, ts] of hits) if (now - ts[ts.length - 1] >= windowMs) hits.delete(k);
+    if (hits.size > MAX_KEYS) hits.clear(); // still flooded inside one window: per-IP only
+  }
+  const recent = (store.get(key) ?? []).filter((t) => now - t < windowMs);
   const limited = recent.length >= max;
   if (!limited) recent.push(now);
-  hits.set(key, recent);
+  store.set(key, recent);
   return limited;
 }
 
+/** x-real-ip (set by Vercel/nginx), else the last X-Forwarded-For hop: the one our proxy added, not one the client typed. */
 export function clientIp(req: Request): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0].trim() || req.headers.get("x-real-ip") || "local";
+  return req.headers.get("x-real-ip")?.trim() || req.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() || "local";
 }
 
 /** Per-IP limit plus a daily global ceiling, so a missing auth layer cannot burn the API budget. */

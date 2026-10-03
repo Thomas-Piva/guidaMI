@@ -4,7 +4,7 @@
    3. states the mockup does not draw (pressed, disabled, voice off, text input). */
 
 :root {
-  --font: var(--font-inter), "Inter", "Helvetica Neue", -apple-system, system-ui, sans-serif;
+  --font: var(--font-open-sans), "Open Sans", "Helvetica Neue", -apple-system, system-ui, sans-serif;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 html { -webkit-text-size-adjust: 100%; }

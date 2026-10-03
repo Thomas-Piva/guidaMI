@@ -16,10 +16,8 @@ const CSS = `
 .mescroll{overflow-y:auto!important;scrollbar-width:none;padding-bottom:16px}
 .mescroll::-webkit-scrollbar{display:none}
 .mescroll > *{flex-shrink:0}
-.step.has-art{grid-template-columns:24px minmax(0,1fr) 56px}
-.gicon img{width:34px;height:34px;object-fit:contain}
 .gcard .img img.art3d{object-fit:contain;padding:8px}
-.art img,.gicon img,.gcard .img img.art3d{mix-blend-mode:multiply}
+.gcard .img img.art3d{mix-blend-mode:multiply}
 .step > .place{grid-column:1 / -1;margin-top:0}
 .place a{color:var(--cyan-ink);text-decoration:underline}
 .place .maprow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px}

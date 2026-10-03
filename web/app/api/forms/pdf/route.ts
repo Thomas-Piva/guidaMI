@@ -5,12 +5,19 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from "pdf-lib";
 import { z } from "zod";
 
 const str = z.string().max(200).default("");
+// Sex typed by hand ("female", "f", "M ") is reduced to the letter the forms take; anything else stays blank.
+const SEX: Record<string, "F" | "M" | "X"> = { f: "F", m: "M", x: "X" };
+const sex = z
+  .string()
+  .max(20)
+  .default("")
+  .transform((v): "F" | "M" | "X" | "" => SEX[v.trim().charAt(0).toLowerCase()] ?? "");
 const Body = z.object({
   form: z.enum(["aa48", "residenza", "tari"]),
   fields: z.object({
     surname: str,
     given_names: str,
-    sex: z.enum(["F", "M", "X", ""]).default(""),
+    sex,
     date_of_birth: str,
     place_of_birth: str,
     nationality: str,

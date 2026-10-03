@@ -170,4 +170,10 @@ describe("POST /api/plan", () => {
     expect(rateLimited("t:ip", 10, 60_000, 1_000)).toBe(true);
     expect(rateLimited("t:ip", 10, 60_000, 70_000)).toBe(false);
   });
+
+  it("keeps the daily ceiling when 5,001 spoofed IPs flood another route", () => {
+    for (let i = 0; i < 3; i++) expect(rateLimited("cap:all", 3, 86_400_000, 1_000)).toBe(false);
+    for (let i = 0; i < 5_001; i++) rateLimited(`flood:${i}`, 30, 60_000, 2_000);
+    expect(rateLimited("cap:all", 3, 86_400_000, 3_000)).toBe(true);
+  });
 });

@@ -154,12 +154,15 @@ function agentBody(tool_ids) {
         },
       },
       tts: { model_id: "eleven_flash_v2_5", voice_id: VOICE_ID },
+      conversation: { max_duration_seconds: 600 }, // spending cap per session (10 min)
       language_presets: Object.fromEntries(
         Object.entries(PRESETS).map(([lang, first_message]) => [lang, { overrides: { agent: { first_message, language: lang } } }]),
       ),
     },
     // lib/voice.ts uses textOnly (voice off) and an empty first message when it restarts a session.
+    // Private agent: a session needs the signed URL from /api/signed-url (rate limited), the agent_id alone is not enough.
     platform_settings: {
+      auth: { enable_auth: true },
       overrides: { conversation_config_override: { conversation: { text_only: true }, agent: { first_message: true } } },
     },
   };

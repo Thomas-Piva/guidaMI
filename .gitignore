@@ -10,3 +10,4 @@ video/
 pitch/build/node_modules/
 pitch/build/*.tmp
 web/.next/
+pitch/*.pptx

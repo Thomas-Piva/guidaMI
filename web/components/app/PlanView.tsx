@@ -1,10 +1,13 @@
 "use client";
 
 import type { KeyboardEvent } from "react";
-import { CheckIcon, PlayIcon, SpeakerHighIcon } from "@phosphor-icons/react";
-import type { Plan, Step } from "@/lib/types";
+import {
+  ChatsCircleIcon, CheckIcon, FileTextIcon, FirstAidKitIcon, GraduationCapIcon, HouseLineIcon, PlayIcon, SpeakerHighIcon, TramIcon,
+  type Icon,
+} from "@phosphor-icons/react";
+import type { Plan, Step, StepIcon } from "@/lib/types";
 import { service } from "@/lib/services";
-import { PlaceBlock, UiStyle, goalArt, icon3d, speak, stepIcon } from "./shared";
+import { PlaceBlock, UiStyle, goalArt, speak } from "./shared";
 
 export type PlanViewProps = {
   plan: Plan;
@@ -23,10 +26,16 @@ export function isLocked(steps: Step[], done: string[], index: number) {
   return first !== -1 && index > first + 1 && !done.includes(steps[index].id);
 }
 
+// Same Phosphor icons as the mockup need cards (ph-house-line for a room, ...).
+const GOAL_ICON: Record<StepIcon, Icon> = {
+  room: HouseLineIcon, taxcode: FileTextIcon, doctor: FirstAidKitIcon, tram: TramIcon, study: GraduationCapIcon, italian: ChatsCircleIcon,
+};
+
 const meta = (s: Step) => [s.bring.join(" + "), s.where, s.how_long, s.deadline].filter(Boolean).join(" · ") || s.why_for_you;
 
 export default function PlanView({ plan, done, goalIt, lang = "en", onHome, onListen, onOpenStep, onOpenPreviews }: PlanViewProps) {
   const art = goalArt(plan.goal);
+  const GoalIcon = GOAL_ICON[art.icon];
   const count = plan.steps.filter((s) => done.includes(s.id)).length;
   const itLine = [goalIt ?? art.it, `${count} of ${plan.steps.length} done`].filter(Boolean).join(" · ");
   const listen = onListen ?? (() => speak(`${plan.headline}. ${plan.steps.map((s, i) => `${i + 1}. ${s.title_en}`).join(". ")}`, lang));
@@ -51,8 +60,7 @@ export default function PlanView({ plan, done, goalIt, lang = "en", onHome, onLi
       <div className="body mescroll">
         <div className="goalhead">
           <div className="gicon">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={icon3d(art.icon)} alt="" />
+            <GoalIcon size={22} />
           </div>
           <div>
             <div className="t1" style={{ fontSize: 18 }}>
@@ -69,7 +77,7 @@ export default function PlanView({ plan, done, goalIt, lang = "en", onHome, onLi
             return (
               <div
                 key={s.id}
-                className={`step has-art meb${isDone ? " done" : ""}${locked ? " lock" : ""}`}
+                className={`step meb${isDone ? " done" : ""}${locked ? " lock" : ""}`}
                 role="button"
                 tabIndex={locked ? -1 : 0}
                 aria-disabled={locked}
@@ -89,10 +97,6 @@ export default function PlanView({ plan, done, goalIt, lang = "en", onHome, onLi
                     </a>
                   )}
                 </div>
-                <span className="art">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={icon3d(stepIcon(s))} alt="" />
-                </span>
                 {s.place && <PlaceBlock place={s.place} />}
               </div>
             );

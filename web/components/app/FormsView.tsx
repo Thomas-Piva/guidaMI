@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { WarningIcon } from "@phosphor-icons/react";
 import type { FormCard, PassportFields } from "@/lib/types";
+import { leftHere, shortLabel } from "@/lib/forms";
 import { UiStyle, useReducedMotion } from "./shared";
 
 export type PdfForm = "aa48" | "residenza" | "tari";
@@ -136,15 +137,16 @@ export default function FormsView({ cards, fields, extra, onExtraChange, onPassp
         </div>
 
         <div className="forms">
-          {cards.map((c) => {
+          {cards.map((c, ci) => {
             const missing = c.fields.filter((f) => f.missing);
+            const left = leftHere(cards, ci);
             const state = dl[c.id];
             const expanded = !!open[c.id];
-            const sub = missing.length
-              ? `${missing.length} field${missing.length > 1 ? "s" : ""} left: ${missing.map((f) => f.label.split(" · ")[0].toLowerCase()).join(", ")}`
-              : c.pdf
-                ? c.office
-                : `${c.office} · on screen`;
+            const sub = !c.pdf
+              ? `${c.office} · on screen`
+              : left.length
+                ? `${left.length} field${left.length > 1 ? "s" : ""} left: ${left.map(shortLabel).join(", ")}`
+                : c.office;
             return (
               <div key={c.id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <div className="frm">
@@ -158,7 +160,9 @@ export default function FormsView({ cards, fields, extra, onExtraChange, onPassp
                     <b>{c.title}</b>
                     <small>{sub}</small>
                   </button>
-                  {c.pdf && isPdf(c.id) && !missing.length ? (
+                  {!c.pdf ? (
+                    <span className="st sc">card</span>
+                  ) : isPdf(c.id) && !missing.length ? (
                     <button
                       type="button"
                       className={`tag dl meb${state === "done" ? " me-ok" : ""}`}
@@ -168,12 +172,10 @@ export default function FormsView({ cards, fields, extra, onExtraChange, onPassp
                     >
                       {state === "loading" ? "Preparing…" : state === "error" ? "Retry PDF" : state === "done" ? "⤓ PDF ✓" : "⤓ PDF"}
                     </button>
-                  ) : missing.length ? (
-                    <button type="button" className="st mi meb" onClick={() => setOpen((o) => ({ ...o, [c.id]: true }))}>
-                      {missing.length} left
-                    </button>
                   ) : (
-                    <span className="st sc">card</span>
+                    <button type="button" className="st mi meb" onClick={() => setOpen((o) => ({ ...o, [c.id]: true }))}>
+                      {left.length} left
+                    </button>
                   )}
                 </div>
 
@@ -192,13 +194,23 @@ export default function FormsView({ cards, fields, extra, onExtraChange, onPassp
                         f.missing || touched[f.key] ? (
                           <label key={f.key} className={`fld on${value(f.key).trim() ? "" : " miss"}`}>
                             <small>{f.label}</small>
-                            <input
-                              className="v mei"
-                              value={value(f.key)}
-                              placeholder="Type it · Scrivilo"
-                              autoComplete="off"
-                              onChange={(e) => change(f.key, e.target.value)}
-                            />
+                            {f.key === "sex" ? (
+                              // same choices as PassportScan: the PDF route only takes F, M, X or empty
+                              <select className="v mei" value={value(f.key)} onChange={(e) => change(f.key, e.target.value)}>
+                                <option value="">Choose · Scegli</option>
+                                <option value="F">F</option>
+                                <option value="M">M</option>
+                                <option value="X">X</option>
+                              </select>
+                            ) : (
+                              <input
+                                className="v mei"
+                                value={value(f.key)}
+                                placeholder="Type it · Scrivilo"
+                                autoComplete="off"
+                                onChange={(e) => change(f.key, e.target.value)}
+                              />
+                            )}
                           </label>
                         ) : (
                           <div key={f.key} className="fld on">

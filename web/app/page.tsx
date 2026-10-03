@@ -64,12 +64,19 @@ async function* apiStream(body: unknown, signal: AbortSignal): AsyncGenerator<Pl
   }
 }
 
+// Demo guides in the mockup's order and wording (S2); they cover every source_url of SAMPLE_PLAN.
+const DEMO_GUIDES: [slug: string, title: string][] = [
+  ["how-to/rents", "Rents in Milano"],
+  ["how-to/get-italian-tax-code", "Get your codice fiscale"],
+  ["how-to/residence-permit-students", "Residence permit for students"],
+  ["how-to/take-residence-milano-students", "Take residence in Milano"],
+  ["how-to/first-steps", "First steps"],
+];
+const READING_LINE: GuideLine = { who: "guide", text: "I'm reading the official guides for you. One moment." };
+
 /** Demo: the sample plan, streamed like the real route (one reading/read pair per guide). */
 async function* demoStream(): AsyncGenerator<PlanEvent> {
-  const slugs = [...new Set([...SAMPLE_PLAN.steps, ...SAMPLE_PLAN.services].map((x) => new URL(x.source_url).pathname.replace(/^\/en\//, "")))];
-  for (const slug of slugs) {
-    const name = slug.split("/").pop()!.replace(/-/g, " ");
-    const title = name[0].toUpperCase() + name.slice(1);
+  for (const [slug, title] of DEMO_GUIDES) {
     yield { type: "reading", slug, title };
     await sleep(420);
     yield { type: "read", slug, title };
@@ -212,6 +219,12 @@ export default function Page() {
     setLocalLines((ls) => [...ls, { who: "you", text }, { who: "guide", text: reply }]);
   };
 
+  /** «Help» pill (S5, S6): a short how-to on screen; the live guide answers out loud too. */
+  const help = (text: string, it: string, question: string) => () => {
+    setNotice({ text, it });
+    if (guide.status === "connected") guide.sendText(question);
+  };
+
   /** «Ask the guide» on a step: context + question; the answer shows in the plan's dock. */
   const ask = async (step: Step) => {
     if (!plan) return;
@@ -298,7 +311,7 @@ export default function Page() {
 
   const toPlanOr = (fallback: Screen) => setScreen(plan ? "plan" : fallback);
   const formsCount = passport
-    ? { ready: cards.filter((c) => c.pdf && c.fields.every((f) => !f.missing)).length, toFinish: cards.filter((c) => c.fields.some((f) => f.missing)).length }
+    ? { ready: cards.filter((c) => c.pdf && c.fields.every((f) => !f.missing)).length, toFinish: cards.filter((c) => c.pdf && c.fields.some((f) => f.missing)).length }
     : undefined;
 
   const home = (
@@ -350,7 +363,11 @@ export default function Page() {
             onExit={() => { runId.current++; abort.current?.abort(); toPlanOr("need"); }}
             onRetry={goal ? () => makePlan(goal.label) : undefined}
           />
-          {dock}
+          {live || guideError || guide.lines.length ? (
+            dock
+          ) : (
+            <VoiceDock lines={[READING_LINE]} voice onClose={() => toggleVoice(false)} onSend={noop} />
+          )}
         </>
       );
       break;
@@ -407,6 +424,11 @@ export default function Page() {
           initial={passport}
           read={demo ? demoRead : undefined}
           onBack={() => toPlanOr("home")}
+          onHelp={help(
+            "Take a clear photo of the page with your picture. We read it and you check every field. Nothing is stored.",
+            "Fotografa la pagina con la foto: leggiamo i dati e tu li controlli. Non salviamo nulla.",
+            "How do I add my passport photo?",
+          )}
           onConfirm={(f) => {
             setPassport(f);
             setScreen("forms");
@@ -423,6 +445,11 @@ export default function Page() {
           onExtraChange={(k, v) => setExtra((e) => ({ ...e, [k]: v }))}
           onPassportChange={(k, v) => setPassport({ ...(passport ?? EMPTY_PASSPORT), [k]: v })}
           onBack={() => toPlanOr("home")}
+          onHelp={help(
+            "Tap a form to check it and type what is missing. Download the PDF, sign it and bring it to the office.",
+            "Tocca un modulo, completa i campi, scarica il PDF e firmalo.",
+            "How do I fill in and use these forms?",
+          )}
         />
       );
       break;

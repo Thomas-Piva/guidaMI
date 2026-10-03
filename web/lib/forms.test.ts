@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { PDFDocument, PDFRawStream, decodePDFRawStream } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 import { POST } from "../app/api/forms/pdf/route";
-import { addDays, buildForms } from "./forms";
+import { addDays, buildForms, leftHere, shortLabel } from "./forms";
 import type { PassportFields } from "./types";
 
 const nour: PassportFields = {
@@ -23,9 +23,9 @@ const addressOf = (cards: ReturnType<typeof buildForms>, id: string) =>
   cards.find((c) => c.id === id)!.fields.find((f) => f.key === "address")!;
 
 describe("buildForms", () => {
-  it("returns the 5 cards in order, PDFs only for aa48, residenza, tari", () => {
+  it("returns the 4 mockup cards in order, PDFs only for aa48, residenza, tari", () => {
     const cards = buildForms(nour, {});
-    expect(cards.map((c) => c.id)).toEqual(["aa48", "modulo1", "residenza", "tari", "atm"]);
+    expect(cards.map((c) => c.id)).toEqual(["aa48", "residenza", "tari", "modulo1"]);
     expect(cards.filter((c) => c.pdf).map((c) => c.id)).toEqual(["aa48", "residenza", "tari"]);
     expect(cards[0].fields.every((f) => !f.missing)).toBe(true); // AA4/8 is ready from the passport alone
   });
@@ -37,8 +37,20 @@ describe("buildForms", () => {
 
   it("counts deadlines from the move-in date", () => {
     expect(addDays("05/10/2026", 90)).toBe("03/01/2027");
-    expect(buildForms(nour, extra)[3].deadline).toBe("Within 90 days of moving in · by 03/01/2027");
-    expect(buildForms(nour, {})[3].deadline).toBe("Within 90 days of moving in");
+    const tari = (x: Record<string, string>) => buildForms(nour, x).find((c) => c.id === "tari")!;
+    expect(tari(extra).deadline).toBe("Within 90 days of moving in · by 03/01/2027");
+    expect(tari({}).deadline).toBe("Within 90 days of moving in");
+  });
+
+  it("lists what is left like the mockup: residenza address, housing; TARI m², start date", () => {
+    const cards = buildForms(nour, {});
+    const left = (id: string) => leftHere(cards, cards.findIndex((c) => c.id === id)).map(shortLabel);
+    expect(left("aa48")).toEqual([]);
+    expect(left("residenza")).toEqual(["address", "housing"]);
+    expect(left("tari")).toEqual(["m²", "start date"]);
+    // once m² and the date are typed, TARI still shows the shared fields it waits for
+    const later = buildForms(nour, { m2: "18", start_date: "05/10/2026" });
+    expect(leftHere(later, 2).map(shortLabel)).toEqual(["address", "housing"]);
   });
 });
 
@@ -77,6 +89,11 @@ describe("POST /api/forms/pdf", () => {
     const bytes = new Uint8Array(await res.arrayBuffer());
     expect((await PDFDocument.load(bytes)).getPageCount()).toBeGreaterThan(1);
     if (process.env.PDF_CHECK_DIR) writeFileSync(`${process.env.PDF_CHECK_DIR}/${form}.pdf`, bytes);
+  });
+
+  it("takes a hand-typed sex instead of answering 400", async () => {
+    expect((await call("aa48", { ...nour, sex: "female" })).status).toBe(200);
+    expect((await call("residenza", { ...nour, sex: "Donna" })).status).toBe(200);
   });
 
   it("rejects an unknown form", async () => {

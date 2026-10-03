@@ -1,4 +1,4 @@
-// Deterministic mapping passport fields + what Nour typed -> the 5 form cards (pure, client-safe).
+// Deterministic mapping passport fields + what Nour typed -> the 4 form cards of mockup S6 (pure, client-safe).
 import type { FormCard, PassportFields } from "./types";
 
 /*
@@ -58,24 +58,8 @@ export function buildForms(fields: PassportFields, extra: Record<string, string>
       fields: [...who, f("passport_number", "Passport no. · N. passaporto", fields.passport_number)],
     },
     {
-      id: "modulo1",
-      title: "Modulo 1 · Residence permit",
-      office: "Questura, via the Poste Italiane postal kit",
-      deadline: deadline("Within 8 days of arrival", extra.arrival_date, 8),
-      source_url: "https://www.portaleimmigrazione.it/",
-      pdf: false,
-      fields: [
-        ...who,
-        f("passport_number", "Passport no. · N. passaporto", fields.passport_number),
-        f("issue_date", "Issued on · Data di rilascio", fields.issue_date),
-        f("expiry_date", "Expires on · Data di scadenza", fields.expiry_date),
-        f("schengen_entry", "Schengen entry date · Data di ingresso", extra.schengen_entry),
-        address,
-      ],
-    },
-    {
       id: "residenza",
-      title: "Residenza · Registered address",
+      title: "Residenza",
       office: "Comune di Milano · Anagrafe",
       deadline: deadline("Within 20 days of moving in", extra.start_date, 20),
       source_url:
@@ -85,7 +69,7 @@ export function buildForms(fields: PassportFields, extra: Record<string, string>
     },
     {
       id: "tari",
-      title: "TARI · Waste tax",
+      title: "TARI",
       office: "Comune di Milano · TARI office",
       deadline: deadline("Within 90 days of moving in", extra.start_date, 90),
       source_url: "https://www.comune.milano.it/dichiaratariutenzedomestiche",
@@ -103,12 +87,35 @@ export function buildForms(fields: PassportFields, extra: Record<string, string>
       ],
     },
     {
-      id: "atm",
-      title: "ATM · Under 27 pass",
-      office: "ATM",
-      source_url: "https://www.atm.it/en/ViaggiaConNoi/Abbonamenti/Pages/AbbonamentiUrbaniStudenti.aspx",
+      id: "modulo1",
+      title: "Modulo 1 · Permesso",
+      office: "Postal kit", // Poste Italiane kit for the Questura: filled by hand, so data stays on screen
+      deadline: deadline("Within 8 days of arrival", extra.arrival_date, 8),
+      source_url: "https://www.portaleimmigrazione.it/",
       pdf: false,
-      fields: [who[0], who[1], who[3]],
+      fields: [
+        ...who,
+        f("passport_number", "Passport no. · N. passaporto", fields.passport_number),
+        f("issue_date", "Issued on · Data di rilascio", fields.issue_date),
+        f("expiry_date", "Expires on · Data di scadenza", fields.expiry_date),
+        f("schengen_entry", "Schengen entry date · Data di ingresso", extra.schengen_entry),
+        address,
+      ],
     },
   ];
+}
+
+// Mockup S6 wording for the «N fields left: ...» line.
+const SHORT: Record<string, string> = { address: "address", housing_title: "housing", m2: "m²", start_date: "start date" };
+export const shortLabel = (field: Field) => {
+  const en = field.label.split(" · ")[0];
+  return SHORT[field.key] ?? en.charAt(0).toLowerCase() + en.slice(1);
+};
+
+/** Fields card i still asks for: shared ones already asked by an earlier card are counted there (mockup: TARI = m², start date). */
+export function leftHere(cards: FormCard[], i: number): Field[] {
+  const missing = cards[i].fields.filter((x) => x.missing);
+  const earlier = new Set(cards.slice(0, i).flatMap((c) => c.fields.filter((x) => x.missing).map((x) => x.key)));
+  const own = missing.filter((x) => !earlier.has(x.key));
+  return own.length ? own : missing;
 }

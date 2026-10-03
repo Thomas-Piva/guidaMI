@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./mockup.css";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-inter" });
+// Same face and weights as the approved mockup (design/mockups/index.html loads Open Sans 400/600/700).
+const openSans = Open_Sans({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-open-sans" });
 
 export const metadata: Metadata = {
   title: "GuidaMI",
@@ -22,7 +23,7 @@ export const viewport: Viewport = {
 // Screens render their parts (.bar, .body, .dock, .foot) directly inside .scr, which is a flex column.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={openSans.variable}>
       <body>
         <div className="phone">
           <div className="scr">
