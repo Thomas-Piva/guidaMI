@@ -5,3 +5,8 @@ __pycache__/
 data/cache/
 brains/
 .DS_Store
+# build artefacts and heavy video sources (final videos are uploaded separately)
+video/
+pitch/build/node_modules/
+pitch/build/*.tmp
+web/.next/

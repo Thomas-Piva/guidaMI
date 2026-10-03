@@ -1,4 +1,4 @@
-# PRODUCT · Milano Evolution
+# PRODUCT · GuidaMI
 
 register: product
 

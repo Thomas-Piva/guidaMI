@@ -1,4 +1,3 @@
-// @ts-nocheck -- vitest is run via npx and not in package.json; keeps `next build` type-check green.
 import { describe, expect, test } from "vitest";
 import { runOpendataTool } from "./opendata";
 

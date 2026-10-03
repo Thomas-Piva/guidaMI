@@ -1,4 +1,4 @@
-# CONTEXT · Milano Evolution
+# CONTEXT · GuidaMI
 
 Claude Impact Lab Milano, 3 October 2026, Track 01 «Welcome journey». Deadline 16:00.
 Spec: [docs/PLAN.md](docs/PLAN.md) · Design system: [DESIGN.md](DESIGN.md) (Airbnb language, Milano colours) · User stories: [docs/USER_STORIES.md](docs/USER_STORIES.md)
@@ -41,6 +41,7 @@ Nour never opens a portal: a guide that understands what a newcomer needs, reads
 | 12:36 | repo created, docs and user stories pushed |
 | 13:50 | plan approved; PLAN.md, DESIGN.md (getdesign airbnb) saved |
 | 14:00 | studied the 70 Airbnb reference screens |
+| 15:10 | app name: **GuidaMI** (Milano + «guida mi»), light-blue icon `design/logo/azzurro/icon-A.png`, Study & Work palette; KB now 66 guides + 585 comune.milano.it procedures + 8 open datasets; news feed for the voice guide in progress; deck being redone in Pitch.com style |
 | 14:40 | hackathon repo rechecked (unchanged); plan adapted: proactive deadline alerts, open-data knowledge base (agent building `lib/opendata.ts`), submission checklist, Airbnb-style generous padding; pitch deck agent running |
 | 14:25 | build started: workflow with 5 parallel builders (API, forms+PDF, voice, onboarding UI, app UI) → integrate → fidelity/e2e/code review → fix; in parallel 2 videos (brag, Higgsfield demo) due 15:15; 3D card icons (Airbnb 2025 style) generating into `web/public/icons3d/`. Contracts in `web/lib/types.ts`, mockup CSS in `web/app/mockup.css`. Demo mode: `?demo=1&screen=<screen>` |
 | 14:35 | design pass with impeccable + taste skill: bottom voice dock with live captions, yellow only for progress and checks, Phosphor icons, cards instead of lined lists; PRODUCT.md added |

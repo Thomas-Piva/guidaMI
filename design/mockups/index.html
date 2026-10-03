@@ -1,7 +1,7 @@
 <title>Milano Evolution Mockup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <style>
 /* Layout: storyboard page. Top: one autoplay phone that walks Nour's whole flow with captions.
@@ -246,6 +246,54 @@ h1,h2{text-wrap:balance}
 .cell .cap em.r{background:var(--yellow)}
 .cell .cap em.m{background:var(--strong)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* ===== Study & Work palette (studyandwork.yesmilano.it CSS) + Airbnb-style generous spacing. Overrides the tokens above. ===== */
+:root{
+  --page:#FCFCF7; --ink:#212121; --body:#3d3d3d;
+  --red:#FFC000; --red-d:#E6AC00;          /* primary action = YesMilano yellow, dark text */
+  --yellow:#FFC000; --yellow-soft:#FFF4CC;
+  --cyan:#3AC6F4; --cyan-ink:#00739B; --cyan-soft:#E4F7FE;
+  --orange:#ED703D; --green:#008C14;
+  --font:"Open Sans","Helvetica Neue",-apple-system,system-ui,sans-serif;
+}
+.cta,.tag.fill{color:var(--ink)}
+.cta{font-weight:700}
+.orb .wave i{background:var(--ink)}
+.pill.audio{border-color:var(--ink);color:var(--ink)}
+.mk.on.no{background:var(--orange);color:#fff}
+.stamp{border-color:var(--green);color:var(--green)}
+.pl i{color:var(--ink)}
+.tag.src{background:var(--cyan-soft);color:var(--cyan-ink)}
+.step.done .n{background:var(--green);color:#fff}
+.lang{background:var(--cyan-soft);color:var(--cyan-ink)}
+:focus-visible{outline-color:var(--cyan)}
+/* generous Airbnb spacing */
+.body{padding:16px 24px 0;gap:16px}
+.foot{padding:0 24px 18px}
+.bar{padding:8px 20px 4px}
+.card{padding:16px;gap:10px;border-radius:14px}
+.card.on{padding:15px}
+.grid2{gap:12px}
+.step{padding:16px;gap:14px;border-radius:16px}
+.steps{gap:12px}
+.row{padding:14px 16px}
+.row.on{padding:13px 15px}
+.frm{padding:14px 16px}
+.forms{gap:10px}
+.chips{gap:8px}
+.chip{padding:8px 14px}
+.chip.on{padding:7px 13px}
+.t1{font-size:24px;line-height:1.2}
+.dock{margin:0 16px 12px;padding:10px 12px 10px 10px}
+.sheet{padding:18px 24px 24px;gap:14px}
+.kv{gap:8px}
+.kv div{padding:10px 12px}
+/* journey cards with 3D image + open-data place (Step.icon / Step.place) */
+.step .art{width:56px;height:56px;border-radius:14px;background:var(--page);display:grid;place-items:center;flex:none}
+.step .art img{width:48px;height:48px;object-fit:contain}
+.place{display:flex;flex-direction:column;gap:2px;margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--page);font-size:12px}
+.place b{font-size:12.5px}
+.place small{color:var(--muted);font-size:10.5px}
+
 </style>
 
 <div class="wrap">
