@@ -52,10 +52,11 @@ export function filterByTopic(items: NewsItem[], topic?: string): NewsItem[] {
   return kws.length ? items.filter((i) => hits(norm(`${i.title} ${i.summary}`), kws)) : items;
 }
 
-/** Newcomer-relevant first, then newest first. */
-export function rank(items: NewsItem[]): NewsItem[] {
-  const score = (i: NewsItem) => (hits(norm(`${i.title} ${i.summary}`), NEWCOMER) ? 1 : 0);
-  return [...items].sort((a, b) => score(b) - score(a) || b.date.localeCompare(a.date));
+/** Newcomer-relevant first (unless a topic already filtered), then closest to today (recent news, upcoming events). */
+export function rank(items: NewsItem[], boost = true, now = Date.now()): NewsItem[] {
+  const score = (i: NewsItem) => (boost && hits(norm(`${i.title} ${i.summary}`), NEWCOMER) ? 1 : 0);
+  const gap = (i: NewsItem) => Math.abs(Date.parse(i.date) - now) || 0;
+  return [...items].sort((a, b) => score(b) - score(a) || gap(a) - gap(b));
 }
 
 /** The only network door: https + allowlisted host, else null without fetching. */
@@ -141,7 +142,7 @@ async function fetchAll(): Promise<News> {
 export async function getNews({ topic, limit = 5 }: { topic?: string; limit?: number } = {}): Promise<News> {
   if (!cache || Date.now() - cache.at > TTL_MS) cache = { news: await fetchAll(), at: Date.now() };
   const n = Math.min(20, Math.max(1, Math.round(limit) || 5));
-  return { ...cache.news, items: rank(filterByTopic(cache.news.items, topic)).slice(0, n) };
+  return { ...cache.news, items: rank(filterByTopic(cache.news.items, topic), !topic?.trim()).slice(0, n) };
 }
 
 /** Test hook: forget the cache. */
