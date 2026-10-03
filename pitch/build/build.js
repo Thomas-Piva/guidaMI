@@ -1,7 +1,8 @@
-// Builds pitch/milano-evolution-pitch.pptx (17 slides, 16:9 10x5.625 in), structured on the jury scorecard.
-// Pitch.com-style: full-bleed colour slides, oversized statements, big numbers, app screens in phones.
-// Copy and speaker notes from pitch/SPEECH.md. Open Sans (build/fonts, installed per user on Windows before the PDF export).
+// Builds pitch/milano-evolution-pitch.pptx (8 slides, 16:9 10x5.625 in), structured on the jury scorecard.
+// Pitch.com-style: full-bleed colour slides, oversized statements, big numbers, real app screens in phones.
+// Copy and speaker notes follow pitch/SPEECH.md, with the assistant named Guido. Open Sans (build/fonts).
 const APP = "GuidaMI"; // rename the app here only
+const BOT = "Guido";   // the assistant's name
 
 const fs = require("fs");
 const pptxgen = require("pptxgenjs");
@@ -14,15 +15,16 @@ const DL = "/mnt/c/Users/yolob/Downloads/";
 const VIDEO = fs.existsSync(DL + "guidami-demo.mp4") ? DL + "guidami-demo.mp4" : DL + "milano-evolution-demo.mp4";
 
 const YEL = "FFC000", INK = "212121", BLUE = "3AC6F4", ORANGE = "ED703D", CREAM = "FCFCF7", WHITE = "FFFFFF";
-const GREY = "6B6B6B", HAIR = "E6E6E0", DARKRULE = "4A4A4A";
+const GREY = "6B6B6B", HAIR = "E6E6E0";
 const F = "Open Sans", FS = "Open Sans SemiBold", FX = "Open Sans ExtraBold";
 const PHONE = 816 / 1724; // framed app screenshot w/h (shots-app.py)
-const shadow = () => ({ type: "outer", color: "000000", opacity: 0.18, blur: 18, offset: 4, angle: 90 });
+const shadow = () => ({ type: "outer", color: "000000", opacity: 0.2, blur: 22, offset: 6, angle: 90 });
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_16x9";
 pres.title = APP;
 const RR = pres.shapes.ROUNDED_RECTANGLE, RECT = pres.shapes.RECTANGLE, LINE = pres.shapes.LINE;
+const wordmark = (size) => [{ text: "Guida", options: { fontFace: F, fontSize: size } }, { text: "MI", options: { fontFace: FX, fontSize: size } }];
 
 // Scorecard criterion tag (pill), top-left.
 const tagPill = (s, tag, fill, color) => {
@@ -34,9 +36,8 @@ const tagPill = (s, tag, fill, color) => {
 function base(bg, tag, { tagFill = INK, tagColor = WHITE, nameColor = INK, lateTag = false } = {}) {
   const s = pres.addSlide();
   s.background = { color: bg };
-  if (!lateTag) tagPill(s, tag, tagFill, tagColor);
-  s.addText([{ text: "Guida", options: { fontFace: F } }, { text: "MI", options: { fontFace: FX } }],
-    { x: 6.5, y: 0.28, w: 2.55, h: 0.3, margin: 0, fontSize: 11.5, color: nameColor, align: "right", valign: "middle" });
+  if (tag && !lateTag) tagPill(s, tag, tagFill, tagColor);
+  s.addText(wordmark(11.5), { x: 6.5, y: 0.28, w: 2.55, h: 0.3, margin: 0, color: nameColor, align: "right", valign: "middle" });
   s.addImage({ path: ICON, x: 9.12, y: 0.27, w: 0.32, h: 0.32 });
   return s;
 }
@@ -47,63 +48,40 @@ const pill = (s, text, x, y, w, o = {}) =>
     shape: RR, rectRadius: 0.18, fill: { color: WHITE }, line: { color: WHITE, width: 0 }, ...o });
 const label = (s, text, x, y, w, color = GREY) =>
   s.addText(text.toUpperCase(), { x, y, w, h: 0.24, margin: 0, fontFace: FS, fontSize: 8.5, charSpacing: 2, color, valign: "middle" });
+const phone = (s, f, x, y, h, o = {}) => s.addImage({ path: A + `app-${f}.png`, x, y, w: h * PHONE, h, ...o });
 
-// Chapter of Nour's journey: number, title, the video card text, where the data comes from, phones on the right.
-function chapter(num, tag, title, card, data, shots, notes, { bg = WHITE, tagFill = INK } = {}) {
-  const s = base(bg, tag, { tagFill });
-  s.addText(String(num).padStart(2, "0"), { x: 0.6, y: 0.8, w: 1.5, h: 0.8, margin: 0, fontFace: FX, fontSize: 48, color: ORANGE, valign: "top" });
-  s.addText(title, { x: 0.6, y: 1.65, w: 3.0, h: 1.05, margin: 0, fontFace: FX, fontSize: 22, color: INK, valign: "top", lineSpacingMultiple: 0.95 });
-  s.addText(card, { x: 0.6, y: 2.75, w: 3.0, h: 1.35, margin: 0, fontFace: FS, fontSize: 13, color: INK, valign: "top" });
-  s.addShape(LINE, { x: 0.6, y: 4.2, w: 3.0, h: 0, line: { color: HAIR, width: 0.75 } });
-  label(s, "Da dove arrivano i dati", 0.6, 4.3, 3, GREY);
-  s.addText(data, { x: 0.6, y: 4.58, w: 3.0, h: 0.8, margin: 0, fontFace: F, fontSize: 9.5, color: GREY, valign: "top" });
-  const n = shots.length, gap = 0.15, area = 5.5;
-  const pw = Math.min(4.6 * PHONE, (area - (n - 1) * gap) / n), ph = pw / PHONE;
-  let x = 3.9 + (area - (n * pw + (n - 1) * gap)) / 2;
-  const y = Math.max(0.75, (5.625 - ph) / 2 + 0.15);
-  shots.forEach((f) => { s.addImage({ path: A + `app-${f}.png`, x, y, w: pw, h: ph }); x += pw + gap; });
-  s.addNotes(notes);
-}
-
-// 1 · Cos'è GuidaMI: product presentation ------------------------------------
+// 1 · Cos'è GuidaMI: cream left, yellow panel right with the splash screen ------
 {
-  const s = base(CREAM, "×1 · Pitch");
-  s.addText([{ text: "Guida", options: { fontFace: F } }, { text: "MI", options: { fontFace: FX } }], { x: 0.6, y: 0.7, w: 5, h: 0.85, margin: 0, fontSize: 48, color: INK, valign: "top" });
-  s.addText("L'assistente del Comune per chi arriva a Milano.", { x: 0.6, y: 1.58, w: 6.6, h: 0.4, margin: 0, fontFace: FS, fontSize: 15, color: INK, valign: "top" });
-  label(s, "Perché", 0.6, 2.35, 1.9, INK);
-  s.addText("Chi arriva si perde tra decine di pagine in italiano, si sente estraneo e dopo gli studi se ne va.", { x: 0.6, y: 2.65, w: 1.95, h: 1.4, margin: 0, fontFace: F, fontSize: 10.5, color: INK, valign: "top" });
-  s.addText("39%", { x: 0.6, y: 4.15, w: 1.9, h: 0.55, margin: 0, fontFace: FX, fontSize: 28, color: ORANGE, valign: "top" });
-  s.addText("dei laureati internazionali Polimi lascia l'Italia entro un anno", { x: 0.6, y: 4.7, w: 1.95, h: 0.5, margin: 0, fontFace: F, fontSize: 8.5, color: GREY, valign: "top" });
-  label(s, "Per chi", 2.8, 2.35, 1.9, INK);
-  [["study.png", "Studenti internazionali e persone appena trasferite"], ["badge.png", "Il Comune che deve accoglierle"]].forEach(([ic, t], i) => {
-    const y = 2.65 + i * 1.3;
-    s.addImage({ path: I3D + ic, x: 2.8, y, w: 0.62, h: 0.62 });
-    s.addText(t, { x: 2.8, y: y + 0.66, w: 1.9, h: 0.55, margin: 0, fontFace: F, fontSize: 10.5, color: INK, valign: "top" });
+  const s = base(CREAM, "×1 · Pitch", { lateTag: true });
+  s.addShape(RECT, { x: 6.3, y: 0, w: 3.7, h: 5.625, fill: { color: YEL }, line: { color: YEL, width: 0 } });
+  tagPill(s, "×1 · Pitch", INK, WHITE);
+  s.addText(wordmark(56), { x: 0.6, y: 0.85, w: 5.5, h: 1.0, margin: 0, color: INK, valign: "top" });
+  s.addText("la guida per te.", { x: 0.6, y: 1.8, w: 5.5, h: 0.5, margin: 0, fontFace: FX, fontSize: 24, color: ORANGE, valign: "top" });
+  s.addText([{ text: BOT, options: { fontFace: FX } }, { text: ", l'assistente del Comune di Milano, per tutti." }],
+    { x: 0.6, y: 2.45, w: 5.4, h: 0.7, margin: 0, fontFace: F, fontSize: 15, color: INK, valign: "top" });
+  label(s, "Per chi", 0.6, 3.45, 3, INK);
+  s.addText("Chi arriva a Milano: visitatori, studenti, nuovi residenti. E le aziende che cercano talenti.",
+    { x: 0.6, y: 3.75, w: 5.3, h: 0.6, margin: 0, fontFace: F, fontSize: 12, color: INK, valign: "top" });
+  [["Visitatori", BLUE], ["Studenti", BLUE], ["Nuovi residenti", BLUE], ["Aziende", ORANGE]].forEach(([t, c], i) => {
+    const w = [1.15, 1.05, 1.5, 1.0][i], x = 0.6 + [0, 1.27, 2.44, 4.06][i];
+    pill(s, t, x, 4.6, w, { fill: { color: c }, line: { color: c, width: 0 } });
   });
-  label(s, "Cosa fa", 4.95, 2.35, 2.4, INK);
-  [["helpline.png", "Capisce cosa ti serve"], ["library.png", "Legge le fonti ufficiali al posto tuo"], ["pin.png", "Ti dice i passi e l'ufficio vicino a te"],
-   ["form.png", "Ti compila i moduli"], ["coffee.png", "Ti fa conoscere Milano, e restare"]].forEach(([ic, t], i) => {
-    const y = 2.65 + i * 0.53;
-    s.addImage({ path: I3D + ic, x: 4.95, y, w: 0.44, h: 0.44 });
-    s.addText(t, { x: 5.5, y, w: 1.85, h: 0.44, margin: 0, fontFace: FS, fontSize: 10, color: INK, valign: "middle" });
-  });
-  const ph = 4.6;
-  s.addImage({ path: A + "app-home.png", x: 7.45, y: 0.85, w: ph * PHONE, h: ph, shadow: shadow() });
+  phone(s, "splash", 6.3 + (3.7 - 4.55 * PHONE) / 2, 0.8, 4.55, { shadow: shadow() });
   s.addNotes(
-`Nour arriva a Milano per studiare. Per sapere cosa fare dovrebbe leggere decine di pagine su cinque siti, metà in italiano: YesMilano, il Comune, ATM, l'Agenzia delle Entrate, la Questura. Ognuna racconta un pezzo e nessuna le dice cosa fare lei, adesso. Sbaglia l'ordine: senza codice fiscale niente contratto, senza contratto niente residenza, senza residenza niente medico. Perde settimane e si sente un'estranea. Solo il 16% degli studenti in mobilità si sente davvero integrato, e quattro laureati internazionali del Politecnico su dieci lasciano l'Italia entro un anno.
-
-GuidaMI è l'assistente del Comune per chi arriva: studenti internazionali, persone appena trasferite, e il Comune che deve accoglierle. Capisce cosa ti serve, legge le fonti ufficiali al posto tuo, ti dice i passi nell'ordine giusto con l'ufficio vicino a te e ti compila i moduli. Nour non apre mai un portale.`);
+`${APP}, la guida per te. Dentro c'è ${BOT}, l'assistente del Comune di Milano, per tutti: chi arriva a Milano, visitatori, studenti, nuovi residenti, e le aziende che cercano talenti. ${BOT} capisce cosa ti serve, legge le fonti ufficiali al posto tuo, ti dice i passi nell'ordine giusto con l'ufficio vicino a te e ti compila i moduli.`);
 }
 
-// 2 · Il problema: full-bleed yellow, statement + big numbers ------------------
+// 2 · Il problema: full-bleed yellow, clear statement, the answer, big numbers ---
 {
   const s = base(YEL, "×1 · Pitch · Il problema");
   statement(s, [
-    { text: "Decine di pagine", options: { breakLine: true } },
-    { text: "su 5 siti, metà", options: { breakLine: true } },
-    { text: "in italiano." },
-  ], { fontSize: 38, w: 5.6, h: 2.1, fontFace: F, bold: true }); // ExtraBold drops to Regular on this run in PowerPoint (accented à), Bold holds
-  s.addText("Chi arriva si sente estraneo. Quando prova l'italiano, i milanesi passano all'inglese.", { x: 0.6, y: 2.98, w: 5.3, h: 0.5, margin: 0, fontFace: F, fontSize: 12, color: INK, valign: "top" });
+    { text: "Per sapere cosa fare", options: { breakLine: true } },
+    { text: "deve cercare tra 5 siti", options: { breakLine: true } },
+    { text: "diversi, metà in italiano." },
+  ], { fontSize: 28, w: 5.7, h: 1.45, fontFace: F, bold: true }); // ExtraBold drops to Regular on runs with accents in PowerPoint, Bold holds
+  s.addText("Chi arriva a Milano si sente estraneo.", { x: 0.6, y: 2.3, w: 5.5, h: 0.35, margin: 0, fontFace: FS, fontSize: 14, color: INK, valign: "top" });
+  s.addText([{ text: APP + " ", options: { fontFace: FX } }, { text: "è un modo nuovo, più semplice e più giocoso, di usare YesMilano e i servizi del Comune." }],
+    { x: 0.6, y: 2.8, w: 5.4, h: 0.72, margin: [4, 10, 4, 10], fontFace: F, fontSize: 11.5, color: WHITE, valign: "middle", fill: { color: INK } });
   s.addImage({ path: A + "site-yesmilano-rents-r.png", x: 6.35, y: 0.82, w: 3.4, h: 2.125, shadow: shadow() });
   s.addImage({ path: A + "site-comune-page-r.png", x: 7.0, y: 1.5, w: 3.4, h: 2.125, shadow: shadow() });
   pill(s, "yesmilano.it", 6.15, 2.72, 1.1, { h: 0.26, fontSize: 8, color: WHITE, fill: { color: INK }, line: { color: INK, width: 0 } });
@@ -118,113 +96,68 @@ GuidaMI è l'assistente del Comune per chi arriva: studenti internazionali, pers
     s.addText(src, { x, y: 5.14, w: 2.65, h: 0.2, margin: 0, fontFace: FS, fontSize: 7.5, color: "5A4300", valign: "top" });
   });
   s.addNotes(
-`Senza codice fiscale niente contratto, senza contratto niente residenza, senza residenza niente medico. Solo il 16% degli studenti in mobilità si sente davvero integrato, e quattro laureati internazionali del Politecnico su dieci lasciano l'Italia entro un anno. Intanto le imprese milanesi faticano a trovare quasi un profilo su due.
+`Nour arriva a Milano per studiare. Per sapere cosa fare deve cercare tra cinque siti diversi, metà in italiano: YesMilano, il Comune, ATM, l'Agenzia delle Entrate, la Questura. Ognuno racconta un pezzo e nessuno le dice cosa fare lei, adesso. Sbaglia l'ordine: senza codice fiscale niente contratto, senza contratto niente residenza, senza residenza niente medico. Si sente un'estranea. Solo il 16% degli studenti in mobilità si sente davvero integrato, e quattro laureati internazionali del Politecnico su dieci lasciano l'Italia entro un anno.
+${APP} è un modo nuovo, più semplice e più giocoso, di usare YesMilano e i servizi del Comune.
 
-Fonti (segnate ok in fonti-e-dati.md): ESNsurvey 2021; Politecnico di Milano, indagine occupazionale 2025 (61% in Italia a un anno, quindi 39% fuori); Assolombarda, rapporto 2025 (45,6% dei profili difficili da reperire). Schermate di yesmilano.it e comune.milano.it del 3/10/2026.`);
+Fonti: ESNsurvey 2021; Politecnico di Milano, indagine occupazionale 2025; Assolombarda, rapporto 2025.`);
 }
 
-// 3 · La visione: metro line with 4 stops, persona side + company side ---------
+// 3 · Video: the silent demo, full slide ------------------------------------------
 {
-  const s = base(CREAM, "×1 · Pitch · La visione");
-  statement(s, "Da visitatore a milanese.", { fontSize: 30, w: 6.6, h: 0.65 });
-  const ly = 2.05, xs = [0.95, 3.6, 6.25, 8.9];
-  s.addShape(LINE, { x: xs[0], y: ly, w: xs[3] - xs[0], h: 0, line: { color: BLUE, width: 7 } });
-  [["Visitatore", "scopre Milano"], ["Nuovo arrivo", "carte, casa, scadenze"], ["Milanese in corso", "italiano e persone"], ["Milanese", "resta dopo la laurea"]].forEach(([n, d], i) => {
-    const last = i === 3, r = last ? 0.2 : 0.15;
-    s.addShape(pres.shapes.OVAL, { x: xs[i] - r, y: ly - r, w: 2 * r, h: 2 * r, fill: { color: last ? YEL : WHITE }, line: { color: INK, width: 2.5 } });
-    const w = 2.2, x = Math.min(Math.max(xs[i] - w / 2, 0.6), 9.4 - w);
-    const align = i === 0 ? "left" : last ? "right" : "center";
-    s.addText(n, { x, y: ly + 0.3, w, h: 0.3, margin: 0, fontFace: FX, fontSize: 13, color: INK, align, valign: "top" });
-    s.addText(d, { x, y: ly + 0.6, w, h: 0.25, margin: 0, fontFace: F, fontSize: 9.5, color: GREY, align, valign: "top" });
-  });
-  pill(s, "Nour resta a Milano", 7.55, 1.38, 1.85, { h: 0.32, fontFace: FX, fontSize: 10, fill: { color: YEL }, line: { color: YEL, width: 0 } });
-  [["Lato persona", BLUE, "coffee.png", ["Carte e scadenze, compilate con lei", "L'italiano, una parola alla volta", "Un caffè con un milanese, «Parlami in italiano»"]],
-   ["Lato aziende", ORANGE, "briefcase.png", ["Talent card, solo con il suo consenso", "Le aziende trovano i laureati prima che partano", "Il permesso da studio a lavoro, precompilato"]]].forEach(([h, col, ic, items], i) => {
-    const x = 0.6 + i * 4.475, y = 3.2, w = 4.3, hh = 2.05;
-    s.addShape(RECT, { x, y, w, h: hh, fill: { color: WHITE }, line: { color: HAIR, width: 0.75 } });
-    s.addShape(RECT, { x, y, w, h: 0.08, fill: { color: col }, line: { color: col, width: 0 } });
-    s.addImage({ path: I3D + ic, x: x + w - 1.12, y: y + 0.2, w: 0.95, h: 0.95 });
-    label(s, h, x + 0.22, y + 0.24, 2.5, INK);
-    s.addText(items.map((t, j) => ({ text: t, options: { bullet: { indent: 12 }, breakLine: j < items.length - 1 } })),
-      { x: x + 0.22, y: y + 0.6, w: w - 1.35, h: 1.3, margin: 0, fontFace: F, fontSize: 11, color: INK, valign: "top", paraSpaceAfter: 5 });
-  });
-  s.addNotes(
-`Il percorso di Nour è una linea della metro con quattro fermate: visitatore, nuovo arrivo, milanese in corso, milanese. Dal lato della persona: le carte, l'italiano, un caffè con un milanese. Dal lato delle aziende: con il suo consenso la Talent card, le aziende la trovano prima della laurea e il permesso da studio a lavoro arriva precompilato. Così Nour resta a Milano.`);
-}
-
-// 4 · Video: full-bleed blue, embedded silent demo -----------------------------
-{
-  const s = base(BLUE, "×1 · Product and execution · Video");
-  statement(s, "Guarda " + APP + " in 90 secondi.", { fontSize: 28, w: 8.8, h: 0.6 });
+  const s = pres.addSlide();
+  s.background = { color: INK };
   const cover = "data:image/jpeg;base64," + fs.readFileSync(A + "video-cover.jpg").toString("base64");
-  s.addMedia({ type: "video", path: VIDEO, cover, x: 0.6, y: 1.55, w: 6.9, h: 6.9 * 9 / 16 });
-  s.addText([{ text: "Video senza audio", options: { fontFace: FX, breakLine: true } }, { text: "Le nove tappe di Nour, dal link nell'email di benvenuto al lavoro a Milano." }],
-    { x: 7.75, y: 1.55, w: 1.7, h: 2.0, margin: 0, fontFace: F, fontSize: 11, color: INK, valign: "top", paraSpaceAfter: 4 });
-  s.addNotes(
-`Video senza audio, 90 secondi: parte con un clic sull'anteprima. Le card del video sono le nove tappe delle slide che seguono.
+  s.addMedia({ type: "video", path: VIDEO, cover, x: 0, y: 0, w: 10, h: 5.625 });
+  s.addNotes(`Video senza audio: parte con un clic. Lasciamo parlare l'app.
 File: ${VIDEO.split("/").pop()}`);
 }
 
-// 5-10 · Journey 1-6 ----------------------------------------------------------
-chapter(1, "×1 · Product and execution", "Arriva a Milano", "Apre GuidaMI dal link nell'email di benvenuto del Comune.",
-  "Il link sta nell'email di benvenuto e sulle pagine studenti di YesMilano.", ["welcome"],
-`Arriva a Milano. Apre GuidaMI dal link nell'email di benvenuto del Comune. La guida la saluta in italiano e le dice subito che è un assistente IA: se vuole una persona, c'è lo 020202.`);
-chapter(2, "×2 · AI at work", "Parla con la guida", "Risponde in inglese e la scheda si compila da sola. Se preferisce, scrive.",
-  "Solo quello che dice Nour. La scheda resta sul suo telefono.", ["about", "interests", "italian"],
-`Parla con la guida. Nour risponde in inglese e la guida passa all'inglese. Mentre parla, la sua scheda si riempie da sola: appena arrivata, extra-UE, interessi, preoccupazioni. Se preferisce, chiude la voce con la X e usa il telefono col tocco.
-
-Il suo italiano. Dice «quattro». La guida le fa tre prove, capisce che il livello vero è due e sposta la barra. Da lì l'app le insegna una parola alla volta.`);
-chapter(3, "×1 · Product and execution", "Dice cosa le serve", "«Devo trovare una stanza.» La guida chiede prima di fare il piano.",
-  "Gli obiettivi seguono le sezioni studenti di YesMilano Study & Work.", ["need"],
-`Dice cosa le serve. «Devo trovare una stanza.» La guida chiede «Faccio il tuo piano?» e aspetta il sì.`);
-chapter(4, "×2 · AI at work", "Legge per lei", "Le guide ufficiali YesMilano e Study & Work, una per una.",
-  "66 guide YesMilano e Study & Work, 585 schede servizi di comune.milano.it.", ["reading"],
-`Legge per lei. Sullo schermo si vedono le guide ufficiali YesMilano e Study & Work che vengono lette una per una.`);
-chapter(5, "×2 · AI at work", "Il suo piano", "Cinque passi in ordine. L'ufficio giusto arriva dagli open data del Comune.",
-  "Open data del Comune: sedi dell'anagrafe, municipi, patronati, fermate della metro. In ogni passo il link alla pagina ufficiale.", ["plan", "step"],
-`Il suo piano. Cinque passi in ordine: codice fiscale, cercare casa senza truffe, contratto registrato, residenza entro 20 giorni, TARI. Ogni passo dice cosa portare, dove andare, quanto ci vuole e la scadenza. L'ufficio arriva dagli open data del Comune: l'anagrafe del suo municipio, il patronato più vicino, la fermata della metro. In fondo a ogni passo c'è il link alla pagina ufficiale.
-
-Fallo con me. Tocca un passo: spiegazione semplice, «ascolta», una domanda alla guida, il pulsante per l'app ufficiale, «fatto».`);
-chapter(6, "×2 · AI at work", "Passaporto e moduli pronti", "I campi compaiono sullo schermo. Lei controlla e firma.",
-  "Moduli ufficiali: Agenzia delle Entrate, Ministero dell'Interno, Comune di Milano. Il passaporto non viene salvato.", ["passport", "forms", "home", "profile"],
-`Foto del passaporto, moduli pronti. Scatta il passaporto. I campi compaiono sullo schermo, lei li controlla e li corregge. Il modulo del codice fiscale, la dichiarazione di residenza e la TARI escono compilati in PDF. Lei li controlla e li firma.
-
-La sua home. Gli obiettivi con l'avanzamento, i moduli, il suo italiano, le scadenze.`);
-
-// 11 · ×2 AI at work: what the assistant does every time ------------------------
+// 4 · Visitatore: the journey in one slide, real screens ------------------------
 {
-  const s = base(INK, "×2 · AI at work", { tagFill: YEL, tagColor: INK, nameColor: WHITE });
-  statement(s, [
-    { text: "L'assistente lavora.", options: { color: WHITE, breakLine: true } },
-    { text: "La persona decide.", options: { color: YEL } },
-  ], { w: 6.6, h: 1.3, fontSize: 30 });
-  const y0 = 2.35, h = 2.85, cw = 2.05, step = 2.25;
-  [["Conversa", "Parla con Nour nella sua lingua e compila la scheda mentre lei parla."],
-   ["Giudica e ordina", "Valuta le prove d'italiano, sceglie quali guide leggere e in che ordine mettere i passi."],
-   ["Prepara", "Legge il passaporto e prepara i moduli ufficiali in PDF."]].forEach(([n, d], i) => {
-    const x = 0.6 + i * step;
-    s.addShape(LINE, { x, y: y0, w: cw, h: 0, line: { color: DARKRULE, width: 1 } });
-    label(s, `0${i + 1}  ${n}`, x, y0 + 0.16, cw, YEL);
-    s.addText(d, { x, y: y0 + 0.55, w: cw - 0.1, h: 1.6, margin: 0, fontFace: F, fontSize: 12, color: WHITE, valign: "top" });
+  const s = base(WHITE, "×1 · Product and execution");
+  statement(s, `Parla con ${BOT}, e le carte si sistemano.`, { fontSize: 26, w: 8.8, h: 0.55 });
+  const shots = [["splash", "Arriva a Milano", "Apre il link nell'email di benvenuto"],
+    ["plan", "Il suo piano", "Personalizzato su quello che chiede, con l'ufficio giusto"],
+    ["passport-scan1", "Foto del passaporto", `${BOT} lo legge, niente viene salvato`],
+    ["passport-fields", "I campi compilati", "Lei li controlla e li corregge"],
+    ["forms", "Moduli pronti", "In PDF, da firmare"]];
+  const h = 3.4, pw = h * PHONE, gap = (8.8 - 5 * pw) / 4;
+  shots.forEach(([f, t, d], i) => {
+    const x = 0.6 + i * (pw + gap);
+    s.addText([{ text: String(i + 1) + "  ", options: { fontFace: FX, color: ORANGE } }, { text: t, options: { fontFace: FS, breakLine: true } },
+      { text: d, options: { fontFace: F, fontSize: 8.5, color: GREY } }],
+      { x, y: 1.45, w: pw + gap - 0.08, h: 0.68, margin: 0, fontSize: 10.5, color: INK, valign: "top" });
+    phone(s, f, x, 2.15, h);
   });
-  const x = 0.6 + 3 * step;
-  s.addShape(RECT, { x, y: y0, w: cw, h, fill: { color: YEL }, line: { color: YEL, width: 0 } });
-  label(s, "04  La persona", x + 0.18, y0 + 0.16, cw - 0.3, INK);
-  s.addText("Decide", { x: x + 0.18, y: y0 + 0.5, w: cw - 0.3, h: 0.5, margin: 0, fontFace: FX, fontSize: 22, color: INK, valign: "middle" });
-  s.addText([
-    { text: "Conferma il piano", options: { breakLine: true } },
-    { text: "Corregge i dati", options: { breakLine: true } },
-    { text: "Firma i moduli" },
-  ], { x: x + 0.18, y: y0 + 1.1, w: cw - 0.3, h: 1.0, margin: 0, fontFace: FS, fontSize: 11.5, color: INK, valign: "top", paraSpaceAfter: 4 });
-  s.addText("Niente viene inviato al posto suo.", { x: x + 0.18, y: y0 + 2.2, w: cw - 0.3, h: 0.5, margin: 0, fontFace: F, fontSize: 9.5, color: INK, valign: "top" });
   s.addNotes(
-`Ogni volta che Nour la usa, l'assistente conversa nella sua lingua, compila la scheda mentre lei parla, giudica le prove d'italiano, decide quali guide leggere e in che ordine mettere i passi, legge il passaporto e prepara i moduli. Le decisioni restano a lei: conferma il piano, corregge i dati, firma i moduli. Niente viene inviato al posto suo.`);
+`Nour apre ${APP} dal link nell'email di benvenuto del Comune. ${BOT} la saluta in italiano e le dice subito che è un assistente IA. Lei risponde in inglese e ${BOT} passa all'inglese; la sua scheda si riempie mentre parla.
+Il suo piano è personalizzato su quello che chiede, per sistemare le carte e integrarsi in città: codice fiscale, cercare casa senza truffe, contratto registrato, residenza entro 20 giorni, TARI. Ogni passo dice cosa portare, dove andare e la scadenza; l'ufficio arriva dagli open data del Comune.
+Scatta il passaporto. I campi compaiono sullo schermo, lei li controlla e li corregge. Il modulo del codice fiscale, la dichiarazione di residenza e la TARI escono compilati in PDF. Lei li firma.`);
 }
 
-// 12 · ×1 City data and sources ------------------------------------------------
+// 5 · Studente e azienda: Talent card, with consent ------------------------------
+{
+  const s = base(CREAM, "×2 · Day-one impact");
+  statement(s, "Studente e azienda.", { fontSize: 28, w: 7, h: 0.6 });
+  [["Lato studente", BLUE, "talent-card", "Nour carica la sua Talent card e la cura: competenze, italiano verificato, impegno nella community."],
+   ["Lato azienda", ORANGE, "talent-search", "L'azienda vede la Talent card della persona, solo con il suo consenso, e la trova prima della laurea."]].forEach(([h, col, f, d], i) => {
+    const x0 = 0.6 + i * 4.5, ph = 3.75;
+    s.addShape(RECT, { x: x0, y: 1.55, w: 4.3, h: 0.07, fill: { color: col }, line: { color: col, width: 0 } });
+    phone(s, "concept-" + f, x0, 1.8, ph);
+    const tx = x0 + ph * PHONE + 0.25, tw = 4.3 - ph * PHONE - 0.25;
+    label(s, h, tx, 1.85, tw, INK);
+    s.addText(d, { x: tx, y: 2.2, w: tw, h: 1.6, margin: 0, fontFace: F, fontSize: 12, color: INK, valign: "top" });
+  });
+  s.addImage({ path: I3D + "badge.png", x: 3.45, y: 4.3, w: 0.85, h: 0.85 });
+  s.addImage({ path: I3D + "briefcase.png", x: 7.95, y: 4.3, w: 0.85, h: 0.85 });
+  s.addNotes(
+`Con il suo consenso la Talent card di Nour mostra competenze, italiano verificato e impegno nella community, e lei la cura nel tempo. Un'azienda scrive «junior designer, italiano B1, da marzo» e trova Nour prima che parta. Alla laurea, il permesso da studio a lavoro è già precompilato. Così Nour resta a Milano.`);
+}
+
+// 6 · Fonti e dati del Comune ------------------------------------------------------
 {
   const s = base(CREAM, "×1 · City data and sources");
-  statement(s, "Ogni passo cita la sua fonte.", { fontSize: 28, w: 6, h: 0.6 });
+  statement(s, "Fonti e dati del Comune.", { fontSize: 28, w: 6, h: 0.6 });
   [["66", "pagine YesMilano e Study & Work, per ogni piano"], ["585", "schede servizi di comune.milano.it, per regole e scadenze"], ["8", "dataset open data, per dire dove andare"]].forEach(([n, l], i) => {
     const x = 0.6 + i * 1.75;
     s.addShape(LINE, { x, y: 1.6, w: 1.55, h: 0, line: { color: INK, width: 1.25 } });
@@ -245,23 +178,19 @@ La sua home. Gli obiettivi con l'avanzamento, i moduli, il suo italiano, le scad
   s.addImage({ path: A + "app-plan-card.png", x: 5.8, y: 2.2, w: cw, h: chh, shadow: shadow() });
   s.addText("Dal piano di Nour: il passo, l'ufficio, la fonte.", { x: 6.15, y: 4.25, w: 3.05, h: 0.6, margin: 0, fontFace: FS, fontSize: 11, color: INK, valign: "top" });
   s.addNotes(
-`Guide ufficiali: 66 pagine YesMilano e Study & Work, lette per costruire ogni piano e citate passo per passo.
-Regole e procedure: 585 schede servizi di comune.milano.it: canali, documenti, scadenze come scritte sulla pagina.
-Open data del Comune: sedi dell'anagrafe, municipi, sedi universitarie, patronati, scuole di italiano per stranieri, servizio sociale, biblioteche, fermate della metro. Servono a dire dove andare e vicino a cosa.
-Moduli ufficiali: Agenzia delle Entrate per il codice fiscale, Ministero dell'Interno per la residenza, Comune di Milano per la TARI.
-Notizie: comunicati del Comune ed eventi YesMilano, sempre con la fonte.`);
+`${BOT} lavora solo su fonti ufficiali. Le 66 pagine YesMilano e Study & Work servono a costruire ogni piano e sono citate passo per passo. Le 585 schede servizi di comune.milano.it danno canali, documenti e scadenze come scritti sulla pagina. Gli open data del Comune, dalle sedi dell'anagrafe alle fermate della metro, dicono dove andare e vicino a cosa. I moduli sono quelli ufficiali di Agenzia delle Entrate, Ministero dell'Interno e Comune di Milano.`);
 }
 
-// 13 · Manifesto IA del Comune di Milano -----------------------------------------
+// 7 · Manifesto IA / compliance -----------------------------------------------------
 {
-  const s = base(CREAM, "×2 · AI at work · Manifesto IA");
+  const s = base(CREAM, "×2 · AI at work");
   statement(s, [{ text: "Coerente con il Manifesto IA", options: { breakLine: true } }, { text: "del Comune di Milano." }], { fontSize: 24, w: 8, h: 0.95 });
-  [["coffee.png", "Umanesimo digitale", "L'IA porta Nour a sedersi davanti a un milanese, con un caffè e tre frasi pronte."],
-   ["helpline.png", "Trasparenza", "Nour sa che parla con un assistente IA e vede la fonte di ogni passo."],
+  [["coffee.png", "Umanesimo digitale", `${BOT} porta Nour a un caffè con un milanese, con tre frasi pronte.`],
+   ["helpline.png", "Trasparenza", `Nour sa che parla con ${BOT}, un assistente IA. Ogni passo cita la sua fonte.`],
    ["italian.png", "Inclusività", "Voce o tocco, la sua lingua, l'italiano un passo alla volta, contro l'«AI divide»."],
    ["key.png", "Protezione dei dati", "I dati restano sul telefono, il passaporto non viene salvato."],
-   ["form.png", "Controllo umano", "Firma lei, e per ogni dubbio c'è un operatore allo 020202."],
-   ["badge.png", "AI Act", "Assistenza ai cittadini a rischio limitato, con informazione chiara e operatore umano."]].forEach(([ic, h, d], i) => {
+   ["form.png", "La persona decide", `${BOT} prepara. Nour conferma il piano, corregge i dati e firma i moduli.`],
+   ["badge.png", "AI Act: rischio limitato", "Informazione chiara. Per ogni dubbio, una persona: 020202."]].forEach(([ic, h, d], i) => {
     const x = 0.6 + (i % 3) * 3.0, y = 2.0 + Math.floor(i / 3) * 1.72, w = 2.8;
     s.addShape(RECT, { x, y, w, h: 1.55, fill: { color: WHITE }, line: { color: HAIR, width: 0.75 } });
     s.addImage({ path: I3D + ic, x: x + 0.12, y: y + 0.12, w: 0.72, h: 0.72 });
@@ -269,30 +198,11 @@ Notizie: comunicati del Comune ed eventi YesMilano, sempre con la fonte.`);
     s.addText(d, { x: x + 0.16, y: y + 0.9, w: w - 0.3, h: 0.6, margin: 0, fontFace: F, fontSize: 9.5, color: GREY, valign: "top" });
   });
   s.addNotes(
-`Umanesimo digitale: l'IA porta Nour a sedersi davanti a un milanese, con un caffè e tre frasi pronte.
-Trasparenza: Nour sa che parla con un assistente IA e vede la fonte di ogni passo.
-Inclusività: voce o tocco, la sua lingua, l'italiano un passo alla volta, contro l'«AI divide».
-Protezione dei dati: i dati restano sul telefono, il passaporto non viene salvato.
-Controllo umano: firma lei, e per ogni dubbio c'è un operatore allo 020202.
-AI Act: assistenza ai cittadini a rischio limitato, con informazione chiara e operatore umano.`);
+`Ogni volta che Nour lo usa, ${BOT} conversa nella sua lingua, compila la scheda mentre lei parla, giudica le prove d'italiano, decide quali guide leggere e in che ordine mettere i passi, legge il passaporto e prepara i moduli. Le decisioni restano a lei: conferma il piano, corregge i dati, firma i moduli. Niente viene inviato al posto suo.
+Tutto questo è coerente con il Manifesto IA del Comune di Milano: un caffè con un milanese, la fonte di ogni passo, voce o tocco nella sua lingua, i dati sul telefono, la firma di Nour. Per l'AI Act è assistenza ai cittadini a rischio limitato, e per ogni dubbio c'è una persona allo 020202.`);
 }
 
-// 14-16 · Journey 7-9 -----------------------------------------------------------
-chapter(7, "×2 · Day-one impact", "Un caffè con un milanese", "Giuseppe, giovedì alle 17, Biblioteca Sormani. Tre frasi pronte.",
-  "Biblioteche dagli open data del Comune, eventi YesMilano, Fascicolo del Cittadino con SPID. Il programma si chiama «Parlami in italiano».",
-  ["concept-parlami", "concept-eventi", "concept-fascicolo"],
-`Un caffè con un milanese. GuidaMI le propone Giuseppe, 68 anni, alla Biblioteca Sormani giovedì alle 17, con tre frasi pronte per conversare. Gli eventi della settimana: il Welcome Day, un caffè in italiano, il career day, e una compagna di corso che ci va.
-
-Lo dice una volta. Con SPID il suo profilo passa nel Fascicolo del Cittadino e i moduli successivi si compilano da soli.`, { bg: CREAM });
-chapter(8, "×2 · Day-one impact", "Trova lavoro e resta", "Con il suo consenso, le aziende di Milano la trovano prima della laurea.",
-  "Talent card solo con il consenso di Nour, ricerca tramite YesMilano. Il permesso usa i moduli del Ministero dell'Interno.",
-  ["concept-talent-card", "concept-talent-search", "concept-permesso"],
-`Trova lavoro e resta. Con il suo consenso la Talent card mostra competenze, italiano verificato e impegno nella community. Un'azienda scrive «junior designer, italiano B1, da marzo» e trova Nour prima che parta. Alla laurea, il permesso da studio a lavoro è già precompilato.`, { bg: CREAM });
-chapter(9, "×2 · Day-one impact", "Il Comune vede cosa serve", "Domande senza risposta e scadenze in arrivo, con dati anonimi.",
-  "Dati anonimi e aggregati dall'uso dell'app, nessun dato personale.", ["concept-comune"],
-`Il Comune vede cosa serve. Dati anonimi e aggregati: le domande senza risposta della settimana e le scadenze in arrivo, per sapere quali pagine scrivere e dove servono sportelli.`, { bg: CREAM });
-
-// 17 · ×2 Day-one impact: split blue/white, link + QR, deadlines, what would help --
+// 8 · Domani basta un link (×2 Day-one impact) ----------------------------------------
 {
   const s = base(WHITE, "×2 · Day-one impact", { lateTag: true });
   s.addShape(RECT, { x: 0, y: 0, w: 4.9, h: 5.625, fill: { color: BLUE }, line: { color: BLUE, width: 0 } });
@@ -320,8 +230,7 @@ chapter(9, "×2 · Day-one impact", "Il Comune vede cosa serve", "Domande senza 
     s.addText(d, { x: 5.85, y: y + 0.28, w: 3.55, h: 0.26, margin: 0, fontFace: F, fontSize: 10, color: GREY, valign: "top" });
   });
   s.addNotes(
-`Al Comune basta un link nell'email di benvenuto e sulle pagine studenti di YesMilano. Le guide e i dati restano del Comune: GuidaMI li legge e li porta alla persona giusta, nel momento in cui servono. Per fare di più servono tre cose: SPID e i dati anagrafici via PDND, così i moduli si compilano senza foto; un calendario unico degli eventi di Comune, università e aziende; il consenso delle persone per farsi trovare dalle aziende.
-
+`Al Comune basta un link nell'email di benvenuto e sulle pagine studenti di YesMilano. Le guide e i dati restano del Comune: ${BOT} li legge e li porta alla persona giusta, nel momento in cui servono. Per fare di più servono tre cose: SPID e i dati anagrafici via PDND, così i moduli si compilano senza foto; un calendario unico degli eventi di Comune, università e aziende; il consenso delle persone per farsi trovare dalle aziende.
 Nour arriva senza sapere da dove cominciare. Un anno dopo parla un po' di italiano, ha un contratto in regola e un lavoro a Milano. Resta.
 
 Il riquadro «QR app» è un segnaposto per il QR del link dal vivo.`);
