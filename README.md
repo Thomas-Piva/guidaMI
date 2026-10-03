@@ -30,7 +30,7 @@
 
 ## Presentation
 
-Open the deck right here on GitHub: [`pitch/GuidaMI-pitch.pdf`](pitch/GuidaMI-pitch.pdf). The PowerPoint version, [`pitch/GuidaMI-pitch.pptx`](pitch/GuidaMI-pitch.pptx), has the 107-second demo video embedded on slide 3, so it plays even when the file is sent as an attachment. The spoken pitch, in Italian, is in [`pitch/SPEECH.md`](pitch/SPEECH.md).
+Open the deck right here on GitHub: [`pitch/GuidaMI-pitch.pdf`](pitch/GuidaMI-pitch.pdf). The PowerPoint version, [`pitch/GuidaMI-pitch.pptx`](pitch/GuidaMI-pitch.pptx), has the 107-second demo video embedded on slide 3, so it plays even when the file is sent as an attachment.
 
 <p align="center">
   <a href="pitch/GuidaMI-pitch.pdf"><img src="pitch/slides/slide-1.png" width="190" alt="Slide 1"></a>
